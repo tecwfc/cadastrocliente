@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Cliente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- jsPDF: geração nativa e confiável de PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #f4f6fb;
+    --bg-decor: radial-gradient(circle at 10% 10%, rgba(99,102,241,.08), transparent 40%),
+                 radial-gradient(circle at 90% 90%, rgba(16,185,129,.08), transparent 40%);
+    --surface: #ffffff;
+    --border: #e8ecf3;
+    --text: #0f172a;
+    --text-soft: #64748b;
+    --primary: #0f172a;
+    --primary-hover: #1e293b;
+    --accent: #10b981;
+    --danger: #ef4444;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,.04);
+    --shadow: 0 4px 24px rgba(15,23,42,.06);
+    --shadow-lg: 0 20px 60px rgba(15,23,42,.10);
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    background-image: var(--bg-decor);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 880px; margin: 0 auto; }
+
+/* Header */
+.hero { text-align: center; margin-bottom: 36px; }
+
+.hero .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-soft);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.hero .badge .dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(16,185,129,.15);
+}
+
+.hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.hero h1 span {
+    background: linear-gradient(135deg, #10b981, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero p { 
+    color: var(--text-soft); 
+    font-size: 14px; 
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 500;
+}
+
+/* Card */
+.card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-header .icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #0f172a, #334155);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.card-header h2 { 
+    font-size: 16px; 
+    font-weight: 700; 
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.card-header p { 
+    font-size: 12px; 
+    color: var(--text-soft); 
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+/* Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.campo { display: flex; flex-direction: column; }
+.campo.full { grid-column: 1 / -1; }
+
+label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+label .req { color: var(--danger); margin-left: 2px; }
+
+input, select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: #fbfcfe;
+    transition: all .2s;
+    outline: none;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+input::placeholder { 
+    color: #94a3b8; 
+    text-transform: none;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+input:hover, select:hover { border-color: #d1d9e6; }
+
+input:focus, select:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(15,23,42,.06);
+}
+
+/* Botões */
+.btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all .2s;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.btn svg { width: 18px; height: 18px; }
+.btn:active { transform: scale(.98); }
+
+.btn-principal {
+    background: var(--primary);
+    color: white;
+    margin-top: 28px;
+    box-shadow: 0 6px 20px rgba(15,23,42,.18);
+}
+.btn-principal:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 10px 28px rgba(15,23,42,.25);
+    transform: translateY(-1px);
+}
+
+.btn-pdf { background: #475569; color: white; }
+.btn-pdf:hover { background: #334155; }
+
+.btn-whatsapp { background: var(--accent); color: white; }
+.btn-whatsapp:hover { background: #059669; }
+
+.btn-novo {
+    background: var(--surface);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+}
+.btn-novo:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+.btn-limpar {
+    background: transparent;
+    color: var(--text-soft);
+    border: 1.5px dashed var(--border);
+    margin-top: 10px;
+    font-weight: 600;
+}
+.btn-limpar:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #dc2626;
+    border-style: solid;
+}
+
+/* Resultado */
+.resultado {
+    display: none;
+    margin-top: 8px;
+    padding: 40px 30px;
+    background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+    border: 1px solid #a7f3d0;
+    border-radius: var(--radius);
+    text-align: center;
+    animation: fadeUp .4s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.resultado .check {
+    width: 64px; height: 64px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 20px;
+    color: white;
+    box-shadow: 0 8px 24px rgba(16,185,129,.35);
+}
+
+.resultado h2 { 
+    font-size: 20px; 
+    font-weight: 700; 
+    margin-bottom: 8px; 
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.resultado > p { 
+    color: var(--text-soft); 
+    margin-bottom: 24px; 
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-weight: 600;
+}
+
+.resultado .btn { max-width: 340px; margin-left: auto; margin-right: auto; }
+
+/* Carregando */
+.carregando {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    color: var(--text-soft);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.carregando::before {
+    content: "";
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+    animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsivo */
+@media (max-width: 680px) {
+    body { padding: 20px 14px; }
+    .hero h1 { font-size: 26px; }
+    .card { padding: 24px; }
+    .grid { grid-template-columns: 1fr; gap: 16px; }
+    .campo.full { grid-column: auto; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="hero">
+        <div class="badge">
+            <span class="dot"></span>
+            Sistema de Cadastro
+        </div>
+        <h1>Cadastro de <span>Cliente</span></h1>
+        <p>Preencha os dados abaixo para registrar um novo cliente</p>
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+            <div class="icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            </div>
+            <div>
+                <h2>Informações do cliente</h2>
+                <p>Campos com <span style="color:#ef4444">*</span> são obrigatórios</p>
+            </div>
+        </div>
+
+        <form id="formCadastro">
+
+            <div class="grid">
+
+                <div class="campo full">
+                    <label>Nome cliente <span class="req">*</span></label>
+                    <input id="nome" placeholder="Nome completo ou razão social" required>
+                </div>
+
+                <div class="campo">
+                    <label>Tipo <span class="req">*</span></label>
+                    <select id="tipo" required>
+                        <option value="">Selecione...</option>
+                        <option value="Física">Pessoa Física</option>
+                        <option value="Jurídica">Pessoa Jurídica</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Nome fantasia</label>
+                    <input id="nomeFantasia" placeholder="Opcional">
+                </div>
+
+                <div class="campo">
+                    <label>CPF/CNPJ</label>
+                    <input id="cpfCnpj" placeholder="Digite CPF ou CNPJ">
+                </div>
+
+                <div class="campo">
+                    <label>IE/RG</label>
+                    <input id="ieRg" placeholder="Inscrição estadual ou RG">
+                </div>
+
+                <div class="campo">
+                    <label>CEP</label>
+                    <input id="cep" maxlength="9" placeholder="00000-000">
+                </div>
+
+                <div class="campo">
+                    <label>Telefone</label>
+                    <input id="telefone" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="campo full">
+                    <label>Endereço</label>
+                    <input id="endereco" placeholder="Rua, avenida...">
+                </div>
+
+                <div class="campo">
+                    <label>Número</label>
+                    <input id="numero" placeholder="123">
+                </div>
+
+                <div class="campo">
+                    <label>Complemento</label>
+                    <input id="complemento" placeholder="Apto, sala...">
+                </div>
+
+                <div class="campo">
+                    <label>Bairro</label>
+                    <input id="bairro" placeholder="Centro">
+                </div>
+
+                <div class="campo">
+                    <label>Cidade <span class="req">*</span></label>
+                    <input id="cidade" placeholder="Ex: São Paulo" required>
+                </div>
+
+                <div class="campo">
+                    <label>UF</label>
+                    <input id="uf" maxlength="2" placeholder="SP" style="text-transform:uppercase">
+                </div>
+
+                <div class="campo">
+                    <label>E-mail</label>
+                    <input id="email" type="email" placeholder="cliente@email.com" style="text-transform:lowercase">
+                </div>
+
+            </div>
+
+            <button class="btn btn-principal" type="submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                Cadastrar cliente
+            </button>
+
+            <button class="btn btn-limpar" type="button" onclick="limparFormulario()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"/>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                </svg>
+                Limpar formulário
+            </button>
+
+        </form>
+
+        <div class="carregando" id="carregando">Salvando cadastro...</div>
+
+        <div class="resultado" id="resultado">
+            <div class="check">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <h2>Cadastro realizado!</h2>
+            <p>O que deseja fazer agora?</p>
+
+            <button class="btn btn-pdf" onclick="gerarPDF()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Gerar PDF
+            </button>
+
+            <button class="btn btn-whatsapp" onclick="enviarWhatsApp()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                Enviar pelo WhatsApp
+            </button>
+
+            <button class="btn btn-novo" onclick="novoCadastro()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Novo cadastro
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
+const STORAGE_KEY = "rascunho_cliente_v1";
+let ultimoCadastro = null;
+
+/* =========================================================
+   MÁSCARAS
+========================================================= */
+function mascaraCep(v) {
+    v = v.replace(/\D/g, "").slice(0, 8);
+    return v.replace(/^(\d{5})(\d)/, "$1-$2");
+}
+function mascaraCnpj(v) {
+    v = v.replace(/\D/g, "").slice(0, 14);
+    return v
+        .replace(/^(\d{2})(\d)/, "$1.$2")
+        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1/$2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+}
+function mascaraCpf(v) {
+    v = v.replace(/\D/g, "").slice(0, 11);
+    return v
+        .replace(/^(\d{3})(\d)/, "$1.$2")
+        .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1-$2");
+}
+function mascaraTelefone(v) {
+    v = v.replace(/\D/g, "").slice(0, 11);
+    if (v.length <= 10) return v.replace(/^(\d{2})(\d{4})(\d)/, "($1) $2-$3");
+    return v.replace(/^(\d{2})(\d{5})(\d)/, "($1) $2-$3");
+}
+
+/* =========================================================
+   CAMPOS DO FORMULÁRIO
+========================================================= */
+const CAMPOS = [
+    "nome", "tipo", "nomeFantasia", "cidade", "uf",
+    "endereco", "numero", "complemento", "cep", "bairro",
+    "cpfCnpj", "ieRg", "telefone", "email"
+];
+
+/* =========================================================
+   RASCUNHO (localStorage)
+========================================================= */
+function salvarRascunho() {
+    const rascunho = {};
+    CAMPOS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) rascunho[id] = el.value;
+    });
+
+    const temAlgo = Object.values(rascunho).some(v => v && v.trim());
+    if (temAlgo) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(rascunho));
+    } else {
+        localStorage.removeItem(STORAGE_KEY);
+    }
+}
+
+function restaurarRascunho() {
+    const bruto = localStorage.getItem(STORAGE_KEY);
+    if (!bruto) return false;
+
+    try {
+        const rascunho = JSON.parse(bruto);
+        let restaurou = false;
+
+        CAMPOS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && rascunho[id] != null && rascunho[id] !== "") {
+                el.value = rascunho[id];
+                restaurou = true;
+            }
+        });
+
+        return restaurou;
+    } catch (e) {
+        console.warn("Rascunho inválido:", e);
+        return false;
+    }
+}
+
+function limparRascunho() {
+    localStorage.removeItem(STORAGE_KEY);
+}
+
+/* =========================================================
+   SALVAMENTO AUTOMÁTICO
+========================================================= */
+CAMPOS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", salvarRascunho);
+    el.addEventListener("change", salvarRascunho);
+});
+
+/* =========================================================
+   MÁSCARAS NOS INPUTS
+========================================================= */
+const inputCep = document.getElementById("cep");
+const inputCnpj = document.getElementById("cpfCnpj");
+const inputTelefone = document.getElementById("telefone");
+
+inputCep.addEventListener("input", e => e.target.value = mascaraCep(e.target.value));
+inputTelefone.addEventListener("input", e => e.target.value = mascaraTelefone(e.target.value));
+
+inputCnpj.addEventListener("input", e => {
+    const tipo = document.getElementById("tipo").value;
+    const v = e.target.value;
+    if (tipo === "Jurídica") e.target.value = mascaraCnpj(v);
+    else if (tipo === "Física") e.target.value = mascaraCpf(v);
+});
+
+/* =========================================================
+   BUSCA CEP (ViaCEP)
+========================================================= */
+async function buscarCep(cep) {
+    const limpo = cep.replace(/\D/g, "");
+    if (limpo.length !== 8) return;
+
+    try {
+        const resp = await fetch(`https://viacep.com.br/ws/${limpo}/json/`);
+        const dados = await resp.json();
+        if (dados.erro) return;
+
+        document.getElementById("endereco").value = (dados.logradouro || "").toUpperCase();
+        document.getElementById("bairro").value = (dados.bairro || "").toUpperCase();
+        document.getElementById("cidade").value = (dados.localidade || "").toUpperCase();
+        document.getElementById("uf").value = (dados.uf || "").toUpperCase();
+
+        salvarRascunho();
+        document.getElementById("numero").focus();
+    } catch (e) {
+        console.warn("Erro ao buscar CEP:", e);
+    }
+}
+
+inputCep.addEventListener("blur", () => buscarCep(inputCep.value));
+inputCep.addEventListener("input", e => {
+    const limpo = e.target.value.replace(/\D/g, "");
+    if (limpo.length === 8) buscarCep(e.target.value);
+});
+
+/* =========================================================
+   BUSCA CNPJ (BrasilAPI)
+========================================================= */
+async function buscarCnpj(cnpj) {
+    const limpo = cnpj.replace(/\D/g, "");
+    if (limpo.length !== 14) return;
+    if (document.getElementById("tipo").value !== "Jurídica") return;
+
+    try {
+        const resp = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${limpo}`);
+        if (!resp.ok) return;
+        const dados = await resp.json();
+
+        const setSeVazio = (id, valor) => {
+            const el = document.getElementById(id);
+            if (el && !el.value.trim() && valor) {
+                el.value = String(valor).toUpperCase();
+            }
+        };
+
+        setSeVazio("nome", dados.razao_social || "");
+        setSeVazio("nomeFantasia", dados.nome_fantasia || "");
+        setSeVazio("endereco", dados.logradouro || "");
+        setSeVazio("numero", dados.numero || "");
+        setSeVazio("complemento", dados.complemento || "");
+        setSeVazio("bairro", dados.bairro || "");
+        setSeVazio("cidade", dados.municipio || "");
+        setSeVazio("uf", dados.uf || "");
+        setSeVazio("cep", mascaraCep(dados.cep || ""));
+        setSeVazio("email", (dados.email || "").toLowerCase());
+        setSeVazio("telefone", mascaraTelefone(dados.ddd_telefone_1 || ""));
+
+        salvarRascunho();
+    } catch (e) {
+        console.warn("Erro ao buscar CNPJ:", e);
+    }
+}
+
+inputCnpj.addEventListener("blur", () => buscarCnpj(inputCnpj.value));
+inputCnpj.addEventListener("input", e => {
+    const tipo = document.getElementById("tipo").value;
+    const limpo = e.target.value.replace(/\D/g, "");
+    if (tipo === "Jurídica" && limpo.length === 14) buscarCnpj(e.target.value);
+});
+
+/* =========================================================
+   PEGAR DADOS (CAIXA ALTA, exceto e-mail)
+========================================================= */
+function pegarDados() {
+    return {
+        nome: document.getElementById("nome").value.trim().toUpperCase(),
+        tipo: document.getElementById("tipo").value.toUpperCase(),
+        nomeFantasia: document.getElementById("nomeFantasia").value.trim().toUpperCase(),
+        cidade: document.getElementById("cidade").value.trim().toUpperCase(),
+        uf: document.getElementById("uf").value.trim().toUpperCase(),
+        endereco: document.getElementById("endereco").value.trim().toUpperCase(),
+        numero: document.getElementById("numero").value.trim().toUpperCase(),
+        complemento: document.getElementById("complemento").value.trim().toUpperCase(),
+        cep: document.getElementById("cep").value.trim(),
+        bairro: document.getElementById("bairro").value.trim().toUpperCase(),
+        cpfCnpj: document.getElementById("cpfCnpj").value.trim(),
+        ieRg: document.getElementById("ieRg").value.trim().toUpperCase(),
+        telefone: document.getElementById("telefone").value.trim(),
+        email: document.getElementById("email").value.trim().toLowerCase()
+    };
+}
+
+/* =========================================================
+   CADASTRAR
+========================================================= */
+document.getElementById("formCadastro").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const dados = pegarDados();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    document.getElementById("carregando").style.display = "block";
+
+    try {
+        const resposta = await fetch(URL_API, {
+            method: "POST",
+            body: JSON.stringify({ acao: "cadastrar", dados: dados })
+        });
+        const resultado = await resposta.json();
+        if (!resultado.sucesso) throw new Error(resultado.erro);
+
+        ultimoCadastro = { ...dados, id: resultado.id };
+
+        limparRascunho();
+
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("formCadastro").style.display = "none";
+    } catch(erro) {
+        alert("Erro ao salvar cadastro:\n\n" + erro.message);
+    } finally {
+        btn.disabled = false;
+        document.getElementById("carregando").style.display = "none";
+    }
+});
+
+/* =========================================================
+   LIMPAR FORMULÁRIO
+========================================================= */
+function limparFormulario() {
+    const temAlgo = CAMPOS.some(id => {
+        const el = document.getElementById(id);
+        return el && el.value.trim();
+    });
+
+    if (temAlgo && !confirm("Tem certeza que deseja limpar todos os campos do formulário?\n\nO rascunho salvo também será apagado.")) {
+        return;
+    }
+
+    document.getElementById("formCadastro").reset();
+    limparRascunho();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* =========================================================
+   GERAR PDF — via jsPDF (nativo, sem html2canvas)
+   =========================================================
+   Esta abordagem NUNCA gera em branco porque desenha o PDF
+   programaticamente, sem capturar a tela.
+========================================================= */
+function gerarPDF() {
+    if (!ultimoCadastro) {
+        alert("Nenhum cadastro para gerar PDF.");
+        return;
+    }
+
+    const c = ultimoCadastro;
+    const { jsPDF } = window.jspdf;
+
+    if (!jsPDF) {
+        alert("Biblioteca jsPDF não carregada. Verifique sua conexão.");
+        return;
+    }
+
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+    const PAGE_W = 210;
+    const MARGIN = 20;
+    let y = 25;
+
+    /* ---------- Cabeçalho ---------- */
+    // Faixa escura no topo
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, PAGE_W, 32, "F");
+
+    // Título
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("CADASTRO DE CLIENTE", PAGE_W / 2, 18, { align: "center" });
+
+    // Subtítulo
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(180, 190, 210);
+    doc.text("DOCUMENTO GERADO AUTOMATICAMENTE", PAGE_W / 2, 25, { align: "center" });
+
+    y = 45;
+
+    /* ---------- Bloco: DADOS DO CLIENTE ---------- */
+    doc.setTextColor(15, 23, 42);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("DADOS DO CLIENTE", MARGIN, y);
+    y += 2;
+
+    // Linha decorativa
+    doc.setDrawColor(16, 185, 129);
+    doc.setLineWidth(0.8);
+    doc.line(MARGIN, y, MARGIN + 40, y);
+    y += 8;
+
+    /* ---------- Campos ---------- */
+    function campo(label, valor, destaque = false) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139);
+        doc.text(label, MARGIN, y);
+
+        doc.setFont("helvetica", destaque ? "bold" : "normal");
+        doc.setFontSize(destaque ? 12 : 10);
+        doc.setTextColor(15, 23, 42);
+
+        const texto = String(valor || "—").toUpperCase();
+
+        // Quebra de linha se necessário
+        const maxWidth = PAGE_W - MARGIN * 2;
+        const linhas = doc.splitTextToSize(texto, maxWidth);
+        linhas.forEach((linha, i) => {
+            doc.text(linha, MARGIN, y + 5 + (i * 5));
+        });
+
+        y += 12 + (linhas.length - 1) * 5;
+    }
+
+    // Nome (destaque)
+    campo("NOME / RAZÃO SOCIAL", c.nome, true);
+
+    // Tipo + CPF/CNPJ na mesma linha
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text("TIPO", MARGIN, y);
+    doc.text("CPF / CNPJ", MARGIN + 80, y);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(15, 23, 42);
+    doc.text(String(c.tipo || "—").toUpperCase(), MARGIN, y + 5);
+    doc.text(String(c.cpfCnpj || "—").toUpperCase(), MARGIN + 80, y + 5);
+    y += 12;
+
+    if (c.nomeFantasia) campo("NOME FANTASIA", c.nomeFantasia);
+    if (c.ieRg) campo("IE / RG", c.ieRg);
+
+    y += 3;
+
+    /* ---------- Bloco: ENDEREÇO ---------- */
+    doc.setTextColor(15, 23, 42);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("ENDEREÇO", MARGIN, y);
+    y += 2;
+
+    doc.setDrawColor(16, 185, 129);
+    doc.setLineWidth(0.8);
+    doc.line(MARGIN, y, MARGIN + 40, y);
+    y += 8;
+
+    // CEP + Bairro na mesma linha
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text("CEP", MARGIN, y);
+    doc.text("BAIRRO", MARGIN + 60, y);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(15, 23, 42);
+    doc.text(String(c.cep || "—").toUpperCase(), MARGIN, y + 5);
+    doc.text(String(c.bairro || "—").toUpperCase(), MARGIN + 60, y + 5);
+    y += 12;
+
+    if (c.endereco) {
+        const num = c.numero ? `, ${c.numero}` : "";
+        campo("ENDEREÇO", c.endereco + num);
+    }
+    if (c.complemento) campo("COMPLEMENTO", c.complemento);
+
+    // Cidade / UF
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text("CIDADE", MARGIN, y);
+    doc.text("UF", MARGIN + 120, y);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(15, 23, 42);
+    doc.text(String(c.cidade || "—").toUpperCase(), MARGIN, y + 5);
+    doc.text(String(c.uf || "—").toUpperCase(), MARGIN + 120, y + 5);
+    y += 15;
+
+    /* ---------- Bloco: CONTATO ---------- */
+    doc.setTextColor(15, 23, 42);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("CONTATO", MARGIN, y);
+    y += 2;
+
+    doc.setDrawColor(16, 185, 129);
+    doc.setLineWidth(0.8);
+    doc.line(MARGIN, y, MARGIN + 40, y);
+    y += 8;
+
+    if (c.telefone) campo("TELEFONE", c.telefone);
+    if (c.email) campo("E-MAIL", c.email.toLowerCase());
+
+    /* ---------- Rodapé ---------- */
+    const footerY = 280;
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, footerY - 4, PAGE_W - MARGIN, footerY - 4);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+
+    const dataAtual = new Date().toLocaleString("pt-BR");
+    doc.text("GERADO EM: " + dataAtual, MARGIN, footerY);
+    doc.text("PÁGINA 1 DE 1", PAGE_W - MARGIN, footerY, { align: "right" });
+
+    /* ---------- Salvar ---------- */
+    const nomeArquivo = "Cadastro_" + (c.nome || "cliente")
+        .replace(/[^\w\s-]/gi, "")
+        .replace(/\s+/g, "_")
+        .substring(0, 40) + ".pdf";
+
+    doc.save(nomeArquivo);
+}
+
+/* =========================================================
+   WHATSAPP (CAIXA ALTA)
+========================================================= */
+function enviarWhatsApp() {
+    const c = ultimoCadastro;
+    let telefone = c.telefone.replace(/\D/g, "");
+    if (telefone.length > 0 && telefone.length <= 11) telefone = "55" + telefone;
+
+    const mensagem = `CADASTRO DO CLIENTE
+
+NOME: ${c.nome}
+TIPO: ${c.tipo}
+NOME FANTASIA: ${c.nomeFantasia || "—"}
+CIDADE: ${c.cidade}/${c.uf}
+ENDEREÇO: ${c.endereco}, ${c.numero}
+COMPLEMENTO: ${c.complemento || "—"}
+CEP: ${c.cep}
+BAIRRO: ${c.bairro}
+CPF/CNPJ: ${c.cpfCnpj}
+IE/RG: ${c.ieRg || "—"}
+TELEFONE: ${c.telefone}
+E-MAIL: ${c.email}`;
+
+    const url = telefone
+        ? "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem)
+        : "https://wa.me/?text=" + encodeURIComponent(mensagem);
+
+    window.open(url, "_blank");
+}
+
+/* =========================================================
+   NOVO CADASTRO
+========================================================= */
+function novoCadastro() {
+    document.getElementById("formCadastro").reset();
+    document.getElementById("formCadastro").style.display = "block";
+    document.getElementById("resultado").style.display = "none";
+    ultimoCadastro = null;
+    limparRascunho();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* =========================================================
+   INICIAR
+========================================================= */
+(function iniciar() {
+    const restaurou = restaurarRascunho();
+    if (restaurou) {
+        const aviso = document.createElement("div");
+        aviso.textContent = "📝 RASCUNHO RECUPERADO AUTOMATICAMENTE";
+        aviso.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-family: Inter, sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            box-shadow: 0 8px 24px rgba(15,23,42,.3);
+            z-index: 9999;
+            animation: fadeUp .3s ease;
+            text-transform: uppercase;
+        `;
+        document.body.appendChild(aviso);
+
+        setTimeout(() => {
+            aviso.style.transition = "opacity .4s";
+            aviso.style.opacity = "0";
+            setTimeout(() => aviso.remove(), 400);
+        }, 3000);
+    }
+})();
+</script>
+
+</body>
+</html>

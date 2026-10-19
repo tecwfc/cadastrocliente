@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Administrativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #f4f6fb;
+    --bg-decor: radial-gradient(circle at 10% 10%, rgba(99,102,241,.08), transparent 40%),
+                 radial-gradient(circle at 90% 90%, rgba(16,185,129,.08), transparent 40%);
+    --surface: #ffffff;
+    --border: #e8ecf3;
+    --text: #0f172a;
+    --text-soft: #64748b;
+    --primary: #0f172a;
+    --accent: #10b981;
+    --danger: #ef4444;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,.04);
+    --shadow: 0 4px 24px rgba(15,23,42,.06);
+    --shadow-lg: 0 20px 60px rgba(15,23,42,.10);
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    background-image: var(--bg-decor);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 1240px; margin: 0 auto; }
+
+/* Topo */
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.topo-left h1 {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    margin-bottom: 6px;
+}
+
+.topo-left h1 span {
+    background: linear-gradient(135deg, #10b981, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.topo-left p {
+    color: var(--text-soft);
+    font-size: 14px;
+}
+
+.btn-atualizar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    padding: 11px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-atualizar:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+.btn-atualizar svg { width: 16px; height: 16px; }
+
+/* Card */
+.card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+}
+
+.card-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.search-wrap {
+    position: relative;
+    flex: 1;
+    max-width: 420px;
+}
+
+.search-wrap svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--text-soft);
+    pointer-events: none;
+}
+
+.pesquisa {
+    width: 100%;
+    padding: 13px 16px 13px 46px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14.5px;
+    font-family: inherit;
+    background: #fbfcfe;
+    transition: all .2s;
+    outline: none;
+}
+
+.pesquisa:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(15,23,42,.06);
+}
+
+.contador {
+    font-size: 13px;
+    color: var(--text-soft);
+    font-weight: 500;
+    background: #f1f5f9;
+    padding: 8px 14px;
+    border-radius: 999px;
+}
+
+/* Tabela */
+.tabela-wrapper { overflow-x: auto; border-radius: var(--radius-sm); }
+
+.tabela {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.tabela th {
+    background: #f8fafc;
+    color: var(--text-soft);
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.tabela th:first-child { border-top-left-radius: var(--radius-sm); }
+.tabela th:last-child { border-top-right-radius: var(--radius-sm); }
+
+.tabela td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text);
+    vertical-align: middle;
+}
+
+.tabela tbody tr { transition: background .15s; }
+.tabela tbody tr:hover { background: #fafbfd; }
+.tabela tbody tr:last-child td { border-bottom: none; }
+
+.tabela td .nome { font-weight: 600; }
+.tabela td .tipo-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: #eef2ff;
+    color: #4f46e5;
+}
+.tabela td .tipo-tag.juridica {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* Ações */
+.acoes { display: flex; gap: 6px; justify-content: flex-end; }
+
+.btn-acao {
+    width: 34px; height: 34px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all .18s;
+    color: var(--text-soft);
+}
+
+.btn-acao svg { width: 15px; height: 15px; }
+
+.btn-acao:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+
+.btn-acao.editar:hover { background: #eff6ff; border-color: #93c5fd; color: #2563eb; }
+.btn-acao.pdf:hover { background: #f8fafc; border-color: #cbd5e1; color: #334155; }
+.btn-acao.whatsapp:hover { background: #ecfdf5; border-color: #6ee7b7; color: #059669; }
+.btn-acao.excluir:hover { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+
+/* Estado vazio */
+.vazio {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-soft);
+}
+.vazio svg { width: 48px; height: 48px; opacity: .3; margin-bottom: 16px; }
+.vazio p { font-size: 15px; }
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.55);
+    backdrop-filter: blur(4px);
+    padding: 20px;
+    overflow: auto;
+    z-index: 100;
+    animation: fadeIn .2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-box {
+    max-width: 820px;
+    margin: 40px auto;
+    background: var(--surface);
+    padding: 36px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    animation: slideUp .3s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header .icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #0f172a, #334155);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+.modal-header p {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-top: 2px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.campo { display: flex; flex-direction: column; }
+.campo.full { grid-column: 1 / -1; }
+
+label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: -.01em;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: #fbfcfe;
+    transition: all .2s;
+    outline: none;
+}
+
+input:hover, select:hover { border-color: #d1d9e6; }
+
+input:focus, select:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(15,23,42,.06);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.salvar {
+    flex: 1;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 6px 20px rgba(15,23,42,.18);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.salvar:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(15,23,42,.25);
+}
+
+.fechar {
+    flex: 0 0 auto;
+    padding: 14px 24px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .2s;
+}
+.fechar:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+/* PDF area */
+.pdf-area {
+    position: absolute;
+    left: -10000px;
+    width: 794px;
+    background: white;
+    padding: 50px;
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+.pdf-area h1 { text-align: center; font-size: 24px; margin-bottom: 8px; letter-spacing: .05em; }
+.pdf-sub { text-align: center; color: #64748b; font-size: 12px; margin-bottom: 30px; }
+.pdf-titulo { border-bottom: 2px solid #0f172a; margin-bottom: 30px; }
+.pdf-linha { margin: 14px 0; font-size: 14px; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; }
+.pdf-linha strong { display: inline-block; width: 180px; color: #475569; }
+
+/* Responsivo */
+@media (max-width: 720px) {
+    body { padding: 20px 14px; }
+    .topo-left h1 { font-size: 24px; }
+    .card { padding: 20px; }
+    .grid { grid-template-columns: 1fr; }
+    .campo.full { grid-column: auto; }
+    .tabela th, .tabela td { padding: 12px; font-size: 13px; }
+    .modal-box { padding: 24px; }
+    .modal-actions { flex-direction: column; }
+    .fechar { width: 100%; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo">
+        <div class="topo-left">
+            <h1>Painel <span>Administrativo</span></h1>
+            <p>Gerencie os clientes cadastrados no sistema</p>
+        </div>
+
+        <button class="btn-atualizar" onclick="carregarClientes()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Atualizar
+        </button>
+    </div>
+
+    <div class="card">
+
+        <div class="card-toolbar">
+            <div class="search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input class="pesquisa" id="pesquisa" placeholder="Pesquisar por nome, CPF, cidade..." oninput="filtrar()">
+            </div>
+            <span class="contador" id="contador">0 clientes</span>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table class="tabela">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Cidade</th>
+                        <th>CPF/CNPJ</th>
+                        <th>Telefone</th>
+                        <th style="text-align:right">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaClientes"></tbody>
+            </table>
+        </div>
+
+        <div class="vazio" id="vazio" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <p>Nenhum cliente encontrado</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <div class="icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div>
+                <h2>Editar cliente</h2>
+                <p>Altere as informações abaixo</p>
+            </div>
+        </div>
+
+        <input type="hidden" id="editId">
+
+        <div class="grid">
+            <div class="campo full">
+                <label>Nome cliente</label>
+                <input id="editNome">
+            </div>
+
+            <div class="campo">
+                <label>Tipo</label>
+                <select id="editTipo">
+                    <option value="Física">Pessoa Física</option>
+                    <option value="Jurídica">Pessoa Jurídica</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label>Nome fantasia</label>
+                <input id="editNomeFantasia">
+            </div>
+
+            <div class="campo">
+                <label>Cidade</label>
+                <input id="editCidade">
+            </div>
+
+            <div class="campo">
+                <label>UF</label>
+                <input id="editUf" maxlength="2" style="text-transform:uppercase">
+            </div>
+
+            <div class="campo">
+                <label>Endereço</label>
+                <input id="editEndereco">
+            </div>
+
+            <div class="campo">
+                <label>Número</label>
+                <input id="editNumero">
+            </div>
+
+            <div class="campo">
+                <label>Complemento</label>
+                <input id="editComplemento">
+            </div>
+
+            <div class="campo">
+                <label>CEP</label>
+                <input id="editCep" maxlength="9">
+            </div>
+
+            <div class="campo">
+                <label>Bairro</label>
+                <input id="editBairro">
+            </div>
+
+            <div class="campo">
+                <label>CPF/CNPJ</label>
+                <input id="editCpfCnpj">
+            </div>
+
+            <div class="campo">
+                <label>IE/RG</label>
+                <input id="editIeRg">
+            </div>
+
+            <div class="campo">
+                <label>Telefone</label>
+                <input id="editTelefone">
+            </div>
+
+            <div class="campo">
+                <label>E-mail</label>
+                <input id="editEmail" type="email">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="salvar" onclick="salvarEdicao()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                Salvar alterações
+            </button>
+            <button class="fechar" onclick="fecharModal()">Cancelar</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- PDF -->
+<div class="pdf-area" id="pdfArea">
+    <h1>CADASTRO DE CLIENTE</h1>
+    <p class="pdf-sub">Documento gerado automaticamente</p>
+    <div class="pdf-titulo"></div>
+    <div class="pdf-linha"><strong>Nome:</strong><span id="pNome"></span></div>
+    <div class="pdf-linha"><strong>Tipo:</strong><span id="pTipo"></span></div>
+    <div class="pdf-linha"><strong>Nome fantasia:</strong><span id="pFantasia"></span></div>
+    <div class="pdf-linha"><strong>Cidade:</strong><span id="pCidade"></span></div>
+    <div class="pdf-linha"><strong>UF:</strong><span id="pUf"></span></div>
+    <div class="pdf-linha"><strong>Endereço:</strong><span id="pEndereco"></span></div>
+    <div class="pdf-linha"><strong>Número:</strong><span id="pNumero"></span></div>
+    <div class="pdf-linha"><strong>Complemento:</strong><span id="pComplemento"></span></div>
+    <div class="pdf-linha"><strong>CEP:</strong><span id="pCep"></span></div>
+    <div class="pdf-linha"><strong>Bairro:</strong><span id="pBairro"></span></div>
+    <div class="pdf-linha"><strong>CPF/CNPJ:</strong><span id="pCpfCnpj"></span></div>
+    <div class="pdf-linha"><strong>IE/RG:</strong><span id="pIeRg"></span></div>
+    <div class="pdf-linha"><strong>Telefone:</strong><span id="pTelefone"></span></div>
+    <div class="pdf-linha"><strong>E-mail:</strong><span id="pEmail"></span></div>
+</div>
+
+<script>
+const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
+let clientes = [];
+
+/* =========================================================
+   MÁSCARAS
+========================================================= */
+function mascaraCep(v) {
+    v = v.replace(/\D/g, "").slice(0, 8);
+    return v.replace(/^(\d{5})(\d)/, "$1-$2");
+}
+function mascaraCnpj(v) {
+    v = v.replace(/\D/g, "").slice(0, 14);
+    return v
+        .replace(/^(\d{2})(\d)/, "$1.$2")
+        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1/$2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+}
+function mascaraCpf(v) {
+    v = v.replace(/\D/g, "").slice(0, 11);
+    return v
+        .replace(/^(\d{3})(\d)/, "$1.$2")
+        .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1-$2");
+}
+function mascaraTelefone(v) {
+    v = v.replace(/\D/g, "").slice(0, 11);
+    if (v.length <= 10) return v.replace(/^(\d{2})(\d{4})(\d)/, "($1) $2-$3");
+    return v.replace(/^(\d{2})(\d{5})(\d)/, "($1) $2-$3");
+}
+
+/* =========================================================
+   BUSCA CEP (ViaCEP) — modal edição
+========================================================= */
+async function buscarCepEdicao(cep) {
+    const limpo = cep.replace(/\D/g, "");
+    if (limpo.length !== 8) return;
+
+    try {
+        const resp = await fetch(`https://viacep.com.br/ws/${limpo}/json/`);
+        const dados = await resp.json();
+        if (dados.erro) return;
+
+        document.getElementById("editEndereco").value = dados.logradouro || "";
+        document.getElementById("editBairro").value = dados.bairro || "";
+        document.getElementById("editCidade").value = dados.localidade || "";
+        document.getElementById("editUf").value = dados.uf || "";
+        document.getElementById("editNumero").focus();
+    } catch (e) {
+        console.warn("Erro ao buscar CEP:", e);
+    }
+}
+
+const editCep = document.getElementById("editCep");
+editCep.addEventListener("input", e => e.target.value = mascaraCep(e.target.value));
+editCep.addEventListener("blur", () => buscarCepEdicao(editCep.value));
+editCep.addEventListener("input", e => {
+    if (e.target.value.replace(/\D/g, "").length === 8) buscarCepEdicao(e.target.value);
+});
+
+/* =========================================================
+   BUSCA CNPJ (BrasilAPI) — modal edição
+========================================================= */
+async function buscarCnpjEdicao(cnpj) {
+    const limpo = cnpj.replace(/\D/g, "");
+    if (limpo.length !== 14) return;
+
+    const tipo = document.getElementById("editTipo").value;
+    if (tipo !== "Jurídica") return;
+
+    try {
+        const resp = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${limpo}`);
+        if (!resp.ok) return;
+
+        const dados = await resp.json();
+
+        document.getElementById("editNome").value = dados.razao_social || "";
+        document.getElementById("editNomeFantasia").value = dados.nome_fantasia || "";
+        document.getElementById("editEndereco").value = dados.logradouro || "";
+        document.getElementById("editNumero").value = dados.numero || "";
+        document.getElementById("editComplemento").value = dados.complemento || "";
+        document.getElementById("editBairro").value = dados.bairro || "";
+        document.getElementById("editCidade").value = dados.municipio || "";
+        document.getElementById("editUf").value = dados.uf || "";
+        document.getElementById("editCep").value = mascaraCep(dados.cep || "");
+        document.getElementById("editEmail").value = dados.email || "";
+        document.getElementById("editTelefone").value = mascaraTelefone(dados.ddd_telefone_1 || "");
+    } catch (e) {
+        console.warn("Erro ao buscar CNPJ:", e);
+    }
+}
+
+const editCpfCnpj = document.getElementById("editCpfCnpj");
+editCpfCnpj.addEventListener("input", e => {
+    const tipo = document.getElementById("editTipo").value;
+    if (tipo === "Jurídica") e.target.value = mascaraCnpj(e.target.value);
+    else if (tipo === "Física") e.target.value = mascaraCpf(e.target.value);
+});
+editCpfCnpj.addEventListener("blur", () => buscarCnpjEdicao(editCpfCnpj.value));
+editCpfCnpj.addEventListener("input", e => {
+    const tipo = document.getElementById("editTipo").value;
+    if (tipo === "Jurídica" && e.target.value.replace(/\D/g, "").length === 14) {
+        buscarCnpjEdicao(e.target.value);
+    }
+});
+
+// Máscara de telefone no modal
+document.getElementById("editTelefone").addEventListener("input", e => {
+    e.target.value = mascaraTelefone(e.target.value);
+});
+
+/* =========================================================
+   RESTANTE (carregar, mostrar, editar, salvar, excluir...)
+========================================================= */
+async function carregarClientes() {
+    try {
+        const resposta = await fetch(URL_API + "?acao=listar");
+        const dados = await resposta.json();
+        if (!dados.sucesso) throw new Error(dados.erro);
+        clientes = dados.clientes;
+        mostrarClientes(clientes);
+    } catch(erro) {
+        alert("Erro ao carregar clientes:\n\n" + erro.message);
+    }
+}
+
+function mostrarClientes(lista) {
+    const tabela = document.getElementById("tabelaClientes");
+    const vazio = document.getElementById("vazio");
+    const contador = document.getElementById("contador");
+
+    tabela.innerHTML = "";
+    contador.textContent = lista.length + (lista.length === 1 ? " cliente" : " clientes");
+
+    if (lista.length === 0) {
+        vazio.style.display = "block";
+        return;
+    }
+    vazio.style.display = "none";
+
+    lista.forEach(function(c) {
+        const tr = document.createElement("tr");
+        const tipoClass = c.tipo === "Jurídica" ? "juridica" : "";
+
+        tr.innerHTML = `
+            <td><span class="nome">${esc(c.nome)}</span></td>
+            <td><span class="tipo-tag ${tipoClass}">${esc(c.tipo)}</span></td>
+            <td>${esc(c.cidade)}/${esc(c.uf)}</td>
+            <td>${esc(c.cpfCnpj)}</td>
+            <td>${esc(c.telefone)}</td>
+            <td>
+                <div class="acoes">
+                    <button class="btn-acao editar" title="Editar" onclick="editar('${c.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </button>
+                    <button class="btn-acao pdf" title="Gerar PDF" onclick="gerarPDF('${c.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </button>
+                    <button class="btn-acao whatsapp" title="WhatsApp" onclick="whatsapp('${c.id}')">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    </button>
+                    <button class="btn-acao excluir" title="Excluir" onclick="excluir('${c.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            </td>
+        `;
+        tabela.appendChild(tr);
+    });
+}
+
+function esc(valor) {
+    return String(valor || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function filtrar() {
+    const termo = document.getElementById("pesquisa").value.toLowerCase();
+    const filtrados = clientes.filter(function(c) {
+        return (
+            String(c.nome).toLowerCase().includes(termo) ||
+            String(c.cpfCnpj).toLowerCase().includes(termo) ||
+            String(c.cidade).toLowerCase().includes(termo) ||
+            String(c.telefone).toLowerCase().includes(termo)
+        );
+    });
+    mostrarClientes(filtrados);
+}
+
+function editar(id) {
+    const c = clientes.find(x => String(x.id) === String(id));
+    if (!c) return;
+
+    document.getElementById("editId").value = c.id;
+    document.getElementById("editNome").value = c.nome;
+    document.getElementById("editTipo").value = c.tipo;
+    document.getElementById("editNomeFantasia").value = c.nomeFantasia;
+    document.getElementById("editCidade").value = c.cidade;
+    document.getElementById("editUf").value = c.uf;
+    document.getElementById("editEndereco").value = c.endereco;
+    document.getElementById("editNumero").value = c.numero;
+    document.getElementById("editComplemento").value = c.complemento;
+    document.getElementById("editCep").value = c.cep;
+    document.getElementById("editBairro").value = c.bairro;
+    document.getElementById("editCpfCnpj").value = c.cpfCnpj;
+    document.getElementById("editIeRg").value = c.ieRg;
+    document.getElementById("editTelefone").value = c.telefone;
+    document.getElementById("editEmail").value = c.email;
+
+    document.getElementById("modal").style.display = "block";
+    document.body.style.overflow = "hidden";
+}
+
+async function salvarEdicao() {
+    const dados = {
+        id: document.getElementById("editId").value,
+        nome: document.getElementById("editNome").value,
+        tipo: document.getElementById("editTipo").value,
+        nomeFantasia: document.getElementById("editNomeFantasia").value,
+        cidade: document.getElementById("editCidade").value,
+        uf: document.getElementById("editUf").value,
+        endereco: document.getElementById("editEndereco").value,
+        numero: document.getElementById("editNumero").value,
+        complemento: document.getElementById("editComplemento").value,
+        cep: document.getElementById("editCep").value,
+        bairro: document.getElementById("editBairro").value,
+        cpfCnpj: document.getElementById("editCpfCnpj").value,
+        ieRg: document.getElementById("editIeRg").value,
+        telefone: document.getElementById("editTelefone").value,
+        email: document.getElementById("editEmail").value
+    };
+
+    try {
+        const resposta = await fetch(URL_API, {
+            method: "POST",
+            body: JSON.stringify({ acao: "atualizar", dados: dados })
+        });
+        const resultado = await resposta.json();
+        if (!resultado.sucesso) throw new Error(resultado.erro);
+        fecharModal();
+        carregarClientes();
+    } catch(erro) {
+        alert("Erro:\n\n" + erro.message);
+    }
+}
+
+async function excluir(id) {
+    const c = clientes.find(x => String(x.id) === String(id));
+    if (!c) return;
+    if (!confirm("Excluir o cliente:\n\n" + c.nome + "?")) return;
+
+    try {
+        const resposta = await fetch(URL_API, {
+            method: "POST",
+            body: JSON.stringify({ acao: "excluir", id: id })
+        });
+        const resultado = await resposta.json();
+        if (!resultado.sucesso) throw new Error(resultado.erro);
+        carregarClientes();
+    } catch(erro) {
+        alert("Erro ao excluir:\n\n" + erro.message);
+    }
+}
+
+async function gerarPDF(id) {
+    const c = clientes.find(x => String(x.id) === String(id));
+    if (!c) return;
+
+    document.getElementById("pNome").textContent = c.nome;
+    document.getElementById("pTipo").textContent = c.tipo;
+    document.getElementById("pFantasia").textContent = c.nomeFantasia;
+    document.getElementById("pCidade").textContent = c.cidade;
+    document.getElementById("pUf").textContent = c.uf;
+    document.getElementById("pEndereco").textContent = c.endereco;
+    document.getElementById("pNumero").textContent = c.numero;
+    document.getElementById("pComplemento").textContent = c.complemento;
+    document.getElementById("pCep").textContent = c.cep;
+    document.getElementById("pBairro").textContent = c.bairro;
+    document.getElementById("pCpfCnpj").textContent = c.cpfCnpj;
+    document.getElementById("pIeRg").textContent = c.ieRg;
+    document.getElementById("pTelefone").textContent = c.telefone;
+    document.getElementById("pEmail").textContent = c.email;
+
+    const elemento = document.getElementById("pdfArea");
+    await html2pdf().set({
+        margin: 10,
+        filename: "Cadastro_" + c.nome.replace(/[^\w\s-]/gi, "") + ".pdf",
+        image: { type: "jpeg", quality: .98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    }).from(elemento).save();
+}
+
+function whatsapp(id) {
+    const c = clientes.find(x => String(x.id) === String(id));
+    if (!c) return;
+
+    let telefone = c.telefone.replace(/\D/g, "");
+    if (telefone) telefone = "55" + telefone;
+
+    const mensagem = `Cadastro do cliente:
+
+Nome: ${c.nome}
+Tipo: ${c.tipo}
+Nome fantasia: ${c.nomeFantasia}
+Cidade: ${c.cidade}/${c.uf}
+Endereço: ${c.endereco}, ${c.numero}
+CEP: ${c.cep}
+Bairro: ${c.bairro}
+CPF/CNPJ: ${c.cpfCnpj}
+IE/RG: ${c.ieRg}
+Telefone: ${c.telefone}
+E-mail: ${c.email}`;
+
+    const url = telefone
+        ? "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem)
+        : "https://wa.me/?text=" + encodeURIComponent(mensagem);
+
+    window.open(url, "_blank");
+}
+
+function fecharModal() {
+    document.getElementById("modal").style.display = "none";
+    document.body.style.overflow = "";
+}
+
+document.getElementById("modal").addEventListener("click", function(e) {
+    if (e.target === this) fecharModal();
+});
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") fecharModal();
+});
+
+carregarClientes();
+</script>
+
+
+</body>
+</html>
