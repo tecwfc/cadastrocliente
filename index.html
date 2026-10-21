@@ -388,8 +388,8 @@ input:focus, select:focus {
                 </div>
 
                 <div class="campo">
-                    <label>IE/RG</label>
-                    <input id="ieRg" placeholder="Inscrição estadual ou RG">
+                    <label>IE/RG <span class="req">*</span></label>
+                    <input id="ieRg" placeholder="Inscrição estadual ou RG" required>
                 </div>
 
                 <div class="campo">
@@ -487,6 +487,7 @@ input:focus, select:focus {
 <script>
 const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
 const STORAGE_KEY = "rascunho_cliente_v1";
+const WHATSAPP_DESTINO = "5588981762208"; // +55 88 98176-2208
 let ultimoCadastro = null;
 
 /* =========================================================
@@ -747,9 +748,6 @@ function limparFormulario() {
 
 /* =========================================================
    GERAR PDF — via jsPDF (nativo, sem html2canvas)
-   =========================================================
-   Esta abordagem NUNCA gera em branco porque desenha o PDF
-   programaticamente, sem capturar a tela.
 ========================================================= */
 function gerarPDF() {
     if (!ultimoCadastro) {
@@ -772,17 +770,14 @@ function gerarPDF() {
     let y = 25;
 
     /* ---------- Cabeçalho ---------- */
-    // Faixa escura no topo
     doc.setFillColor(15, 23, 42);
     doc.rect(0, 0, PAGE_W, 32, "F");
 
-    // Título
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
     doc.text("CADASTRO DE CLIENTE", PAGE_W / 2, 18, { align: "center" });
 
-    // Subtítulo
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(180, 190, 210);
@@ -797,7 +792,6 @@ function gerarPDF() {
     doc.text("DADOS DO CLIENTE", MARGIN, y);
     y += 2;
 
-    // Linha decorativa
     doc.setDrawColor(16, 185, 129);
     doc.setLineWidth(0.8);
     doc.line(MARGIN, y, MARGIN + 40, y);
@@ -816,7 +810,6 @@ function gerarPDF() {
 
         const texto = String(valor || "—").toUpperCase();
 
-        // Quebra de linha se necessário
         const maxWidth = PAGE_W - MARGIN * 2;
         const linhas = doc.splitTextToSize(texto, maxWidth);
         linhas.forEach((linha, i) => {
@@ -826,10 +819,8 @@ function gerarPDF() {
         y += 12 + (linhas.length - 1) * 5;
     }
 
-    // Nome (destaque)
     campo("NOME / RAZÃO SOCIAL", c.nome, true);
 
-    // Tipo + CPF/CNPJ na mesma linha
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
@@ -860,7 +851,6 @@ function gerarPDF() {
     doc.line(MARGIN, y, MARGIN + 40, y);
     y += 8;
 
-    // CEP + Bairro na mesma linha
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
@@ -880,7 +870,6 @@ function gerarPDF() {
     }
     if (c.complemento) campo("COMPLEMENTO", c.complemento);
 
-    // Cidade / UF
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
@@ -933,12 +922,15 @@ function gerarPDF() {
 }
 
 /* =========================================================
-   WHATSAPP (CAIXA ALTA)
+   WHATSAPP — ENVIO DIRETO PARA NÚMERO FIXO
+   Destino: +55 88 98176-2208
 ========================================================= */
 function enviarWhatsApp() {
     const c = ultimoCadastro;
-    let telefone = c.telefone.replace(/\D/g, "");
-    if (telefone.length > 0 && telefone.length <= 11) telefone = "55" + telefone;
+    if (!c) {
+        alert("Nenhum cadastro para enviar.");
+        return;
+    }
 
     const mensagem = `CADASTRO DO CLIENTE
 
@@ -955,10 +947,7 @@ IE/RG: ${c.ieRg || "—"}
 TELEFONE: ${c.telefone}
 E-MAIL: ${c.email}`;
 
-    const url = telefone
-        ? "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem)
-        : "https://wa.me/?text=" + encodeURIComponent(mensagem);
-
+    const url = "https://wa.me/" + WHATSAPP_DESTINO + "?text=" + encodeURIComponent(mensagem);
     window.open(url, "_blank");
 }
 
