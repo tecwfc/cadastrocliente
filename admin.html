@@ -862,35 +862,146 @@ async function excluir(id) {
     }
 }
 
-async function gerarPDF(id) {
+function gerarPDF(id) {
     const c = clientes.find(x => String(x.id) === String(id));
-    if (!c) return;
+    if (!c) {
+        alert("Cliente não encontrado.");
+        return;
+    }
 
-    document.getElementById("pNome").textContent = c.nome;
-    document.getElementById("pTipo").textContent = c.tipo;
-    document.getElementById("pFantasia").textContent = c.nomeFantasia;
-    document.getElementById("pCidade").textContent = c.cidade;
-    document.getElementById("pUf").textContent = c.uf;
-    document.getElementById("pEndereco").textContent = c.endereco;
-    document.getElementById("pNumero").textContent = c.numero;
-    document.getElementById("pComplemento").textContent = c.complemento;
-    document.getElementById("pCep").textContent = c.cep;
-    document.getElementById("pBairro").textContent = c.bairro;
-    document.getElementById("pCpfCnpj").textContent = c.cpfCnpj;
-    document.getElementById("pIeRg").textContent = c.ieRg;
-    document.getElementById("pTelefone").textContent = c.telefone;
-    document.getElementById("pEmail").textContent = c.email;
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+        alert("Biblioteca jsPDF não carregada. Verifique sua conexão.");
+        return;
+    }
 
-    const elemento = document.getElementById("pdfArea");
-    await html2pdf().set({
-        margin: 10,
-        filename: "Cadastro_" + c.nome.replace(/[^\w\s-]/gi, "") + ".pdf",
-        image: { type: "jpeg", quality: .98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-    }).from(elemento).save();
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const PAGE_W = 210;
+    const MARGIN = 20;
+    let y = 25;
+
+    /* Cabeçalho */
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, PAGE_W, 32, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("CADASTRO DE CLIENTE", PAGE_W / 2, 18, { align: "center" });
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(180, 190, 210);
+    doc.text("DOCUMENTO GERADO AUTOMATICAMENTE", PAGE_W / 2, 25, { align: "center" });
+
+    y = 45;
+
+    function secao(titulo) {
+        doc.setTextColor(15, 23, 42);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.text(titulo, MARGIN, y);
+        y += 2;
+        doc.setDrawColor(16, 185, 129);
+        doc.setLineWidth(0.8);
+        doc.line(MARGIN, y, MARGIN + 40, y);
+        y += 8;
+    }
+
+    function campo(label, valor, destaque = false) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139);
+        doc.text(label, MARGIN, y);
+
+        doc.setFont("helvetica", destaque ? "bold" : "normal");
+        doc.setFontSize(destaque ? 12 : 10);
+        doc.setTextColor(15, 23, 42);
+
+        const texto = String(valor || "—").toUpperCase();
+        const linhas = doc.splitTextToSize(texto, PAGE_W - MARGIN * 2);
+        linhas.forEach((linha, i) => doc.text(linha, MARGIN, y + 5 + (i * 5)));
+        y += 12 + (linhas.length - 1) * 5;
+    }
+
+    /* Dados do cliente */
+    secao("DADOS DO CLIENTE");
+    campo("NOME / RAZÃO SOCIAL", c.nome, true);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text("TIPO", MARGIN, y);
+    doc.text("CPF / CNPJ", MARGIN + 80, y);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(15, 23, 42);
+    doc.text(String(c.tipo || "—").toUpperCase(), MARGIN, y + 5);
+    doc.text(String(c.cpfCnpj || "—").toUpperCase(), MARGIN + 80, y + 5);
+    y += 12;
+
+    if (c.nomeFantasia) campo("NOME FANTASIA", c.nomeFantasia);
+    if (c.ieRg) campo("IE / RG", c.ieRg);
+    y += 3;
+
+    /* Endereço */
+    secao("ENDEREÇO");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text("CEP", MARGIN, y);
+    doc.text("BAIRRO", MARGIN + 60, y);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(15, 23, 42);
+    doc.text(String(c.cep || "—").toUpperCase(), MARGIN, y + 5);
+    doc.text(String(c.bairro || "—").toUpperCase(), MARGIN + 60, y + 5);
+    y += 12;
+
+    if (c.endereco) {
+        const num = c.numero ? `, ${c.numero}` : "";
+        campo("ENDEREÇO", c.endereco + num);
+    }
+    if (c.complemento) campo("COMPLEMENTO", c.complemento);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text("CIDADE", MARGIN, y);
+    doc.text("UF", MARGIN + 120, y);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(15, 23, 42);
+    doc.text(String(c.cidade || "—").toUpperCase(), MARGIN, y + 5);
+    doc.text(String(c.uf || "—").toUpperCase(), MARGIN + 120, y + 5);
+    y += 15;
+
+    /* Contato */
+    secao("CONTATO");
+    if (c.telefone) campo("TELEFONE", c.telefone);
+    if (c.email) campo("E-MAIL", c.email.toLowerCase());
+
+    /* Rodapé */
+    const footerY = 280;
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, footerY - 4, PAGE_W - MARGIN, footerY - 4);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text("GERADO EM: " + new Date().toLocaleString("pt-BR"), MARGIN, footerY);
+    doc.text("PÁGINA 1 DE 1", PAGE_W - MARGIN, footerY, { align: "right" });
+
+    const nomeArquivo = "Cadastro_" + (c.nome || "cliente")
+        .replace(/[^\w\s-]/gi, "")
+        .replace(/\s+/g, "_")
+        .substring(0, 40) + ".pdf";
+
+    doc.save(nomeArquivo);
 }
-
+    
 function whatsapp(id) {
     const c = clientes.find(x => String(x.id) === String(id));
     if (!c) return;
