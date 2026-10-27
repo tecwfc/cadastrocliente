@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- jsPDF: geração nativa e confiável de PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
@@ -32,12 +31,15 @@
     --shadow-lg: 0 20px 60px rgba(15,23,42,.10);
 }
 
+html { -webkit-text-size-adjust: 100%; }
+
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: var(--bg);
     background-image: var(--bg-decor);
     color: var(--text);
     min-height: 100vh;
+    min-height: 100dvh;
     padding: 40px 20px;
     -webkit-font-smoothing: antialiased;
 }
@@ -86,9 +88,9 @@ body {
     background-clip: text;
 }
 
-.hero p { 
-    color: var(--text-soft); 
-    font-size: 14px; 
+.hero p {
+    color: var(--text-soft);
+    font-size: 14px;
     text-transform: uppercase;
     letter-spacing: .04em;
     font-weight: 500;
@@ -122,16 +124,16 @@ body {
     flex-shrink: 0;
 }
 
-.card-header h2 { 
-    font-size: 16px; 
-    font-weight: 700; 
+.card-header h2 {
+    font-size: 16px;
+    font-weight: 700;
     letter-spacing: .02em;
     text-transform: uppercase;
 }
 
-.card-header p { 
-    font-size: 12px; 
-    color: var(--text-soft); 
+.card-header p {
+    font-size: 12px;
+    color: var(--text-soft);
     margin-top: 2px;
     text-transform: uppercase;
     letter-spacing: .04em;
@@ -163,7 +165,7 @@ input, select {
     padding: 13px 16px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    font-size: 14px;
+    font-size: 16px;
     font-family: inherit;
     color: var(--text);
     background: #fbfcfe;
@@ -171,10 +173,11 @@ input, select {
     outline: none;
     text-transform: uppercase;
     letter-spacing: .02em;
+    min-height: 48px;
 }
 
-input::placeholder { 
-    color: #94a3b8; 
+input::placeholder {
+    color: #94a3b8;
     text-transform: none;
     font-weight: 400;
     letter-spacing: 0;
@@ -188,7 +191,20 @@ input:focus, select:focus {
     box-shadow: 0 0 0 4px rgba(15,23,42,.06);
 }
 
-/* Botões */
+input:disabled, select:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    background: #f1f5f9;
+}
+
+/* Ações */
+.acoes-principais {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 28px;
+}
+
 .btn {
     width: 100%;
     padding: 15px;
@@ -198,7 +214,6 @@ input:focus, select:focus {
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
-    margin-top: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -206,35 +221,22 @@ input:focus, select:focus {
     transition: all .2s;
     letter-spacing: .06em;
     text-transform: uppercase;
+    min-height: 50px;
 }
 
-.btn svg { width: 18px; height: 18px; }
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 .btn:active { transform: scale(.98); }
-
-.btn-principal {
-    background: var(--primary);
-    color: white;
-    margin-top: 28px;
-    box-shadow: 0 6px 20px rgba(15,23,42,.18);
-}
-.btn-principal:hover {
-    background: var(--primary-hover);
-    box-shadow: 0 10px 28px rgba(15,23,42,.25);
-    transform: translateY(-1px);
+.btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none !important;
 }
 
 .btn-pdf { background: #475569; color: white; }
-.btn-pdf:hover { background: #334155; }
+.btn-pdf:hover:not(:disabled) { background: #334155; }
 
 .btn-whatsapp { background: var(--accent); color: white; }
-.btn-whatsapp:hover { background: #059669; }
-
-.btn-novo {
-    background: var(--surface);
-    color: var(--text);
-    border: 1.5px solid var(--border);
-}
-.btn-novo:hover { background: #f8fafc; border-color: #cbd5e1; }
+.btn-whatsapp:hover:not(:disabled) { background: #059669; }
 
 .btn-limpar {
     background: transparent;
@@ -242,6 +244,8 @@ input:focus, select:focus {
     border: 1.5px dashed var(--border);
     margin-top: 10px;
     font-weight: 600;
+    min-height: 46px;
+    grid-column: 1 / -1;
 }
 .btn-limpar:hover {
     background: #fef2f2;
@@ -250,58 +254,40 @@ input:focus, select:focus {
     border-style: solid;
 }
 
-/* Resultado */
-.resultado {
+/* Mensagens */
+.mensagem {
     display: none;
-    margin-top: 8px;
-    padding: 40px 30px;
-    background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    animation: fadeUp .3s ease;
+}
+
+.mensagem.erro {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #b91c1c;
+}
+
+.mensagem.sucesso {
+    background: #ecfdf5;
     border: 1px solid #a7f3d0;
-    border-radius: var(--radius);
-    text-align: center;
-    animation: fadeUp .4s ease;
+    color: #047857;
 }
 
 @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-.resultado .check {
-    width: 64px; height: 64px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    margin: 0 auto 20px;
-    color: white;
-    box-shadow: 0 8px 24px rgba(16,185,129,.35);
-}
-
-.resultado h2 { 
-    font-size: 20px; 
-    font-weight: 700; 
-    margin-bottom: 8px; 
-    letter-spacing: .02em;
-    text-transform: uppercase;
-}
-
-.resultado > p { 
-    color: var(--text-soft); 
-    margin-bottom: 24px; 
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    font-weight: 600;
-}
-
-.resultado .btn { max-width: 340px; margin-left: auto; margin-right: auto; }
 
 /* Carregando */
 .carregando {
     display: none;
     text-align: center;
-    padding: 20px;
+    padding: 16px;
     color: var(--text-soft);
     font-weight: 600;
     font-size: 12px;
@@ -325,11 +311,23 @@ input:focus, select:focus {
 
 /* Responsivo */
 @media (max-width: 680px) {
-    body { padding: 20px 14px; }
-    .hero h1 { font-size: 26px; }
-    .card { padding: 24px; }
-    .grid { grid-template-columns: 1fr; gap: 16px; }
+    body { padding: 18px 12px; }
+    .hero { margin-bottom: 22px; }
+    .hero h1 { font-size: 22px; }
+    .hero p { font-size: 11px; }
+    .card { padding: 20px; border-radius: 12px; }
+    .card-header { margin-bottom: 18px; padding-bottom: 16px; gap: 10px; }
+    .card-header .icon { width: 38px; height: 38px; border-radius: 10px; }
+    .card-header h2 { font-size: 14px; }
+    .card-header p { font-size: 10.5px; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
     .campo.full { grid-column: auto; }
+    label { font-size: 11px; margin-bottom: 6px; }
+    input, select { padding: 11px 13px; min-height: 44px; }
+    .btn { padding: 13px; font-size: 12px; min-height: 46px; }
+    .btn svg { width: 16px; height: 16px; }
+    .acoes-principais { gap: 10px; margin-top: 20px; }
+    .mensagem { font-size: 12px; padding: 12px 14px; }
 }
 </style>
 </head>
@@ -344,7 +342,7 @@ input:focus, select:focus {
             Sistema de Cadastro
         </div>
         <h1>Cadastro de <span>Cliente</span></h1>
-        <p>Preencha os dados abaixo para registrar um novo cliente</p>
+        <p>Preencha os dados abaixo para salvar e gerar o PDF ou enviar pelo WhatsApp</p>
     </div>
 
     <div class="card">
@@ -359,7 +357,7 @@ input:focus, select:focus {
             </div>
         </div>
 
-        <form id="formCadastro">
+        <form id="formCadastro" autocomplete="off" onsubmit="return false;">
 
             <div class="grid">
 
@@ -439,46 +437,33 @@ input:focus, select:focus {
 
             </div>
 
-            <button class="btn btn-principal" type="submit">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                Cadastrar cliente
-            </button>
+            <div class="acoes-principais">
 
-            <button class="btn btn-limpar" type="button" onclick="limparFormulario()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18"/>
-                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                </svg>
-                Limpar formulário
-            </button>
+                <button class="btn btn-pdf" type="button" id="btnPDF" onclick="gerarPDF()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    Salvar e gerar PDF
+                </button>
+
+                <button class="btn btn-whatsapp" type="button" id="btnWhatsApp" onclick="enviarWhatsApp()">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    Salvar e enviar WhatsApp
+                </button>
+
+                <button class="btn btn-limpar" type="button" onclick="limparFormulario()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"/>
+                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    </svg>
+                    Limpar formulário
+                </button>
+            </div>
 
         </form>
 
         <div class="carregando" id="carregando">Salvando cadastro...</div>
 
-        <div class="resultado" id="resultado">
-            <div class="check">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            </div>
-            <h2>Cadastro realizado!</h2>
-            <p>O que deseja fazer agora?</p>
-
-            <button class="btn btn-pdf" onclick="gerarPDF()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                Gerar PDF
-            </button>
-
-            <button class="btn btn-whatsapp" onclick="enviarWhatsApp()">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                Enviar pelo WhatsApp
-            </button>
-
-            <button class="btn btn-novo" onclick="novoCadastro()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                Novo cadastro
-            </button>
-        </div>
+        <div class="mensagem" id="mensagem"></div>
 
     </div>
 
@@ -487,8 +472,11 @@ input:focus, select:focus {
 <script>
 const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
 const STORAGE_KEY = "rascunho_cliente_v1";
-const WHATSAPP_DESTINO = "5588981762208"; // +55 88 98176-2208
+const WHATSAPP_DESTINO = "5588981762208";
+
+/* Último cadastro salvo nesta sessão (para não duplicar ao clicar PDF e depois WhatsApp) */
 let ultimoCadastro = null;
+let ultimoCadastroHash = null;
 
 /* =========================================================
    MÁSCARAS
@@ -519,7 +507,7 @@ function mascaraTelefone(v) {
 }
 
 /* =========================================================
-   CAMPOS DO FORMULÁRIO
+   CAMPOS
 ========================================================= */
 const CAMPOS = [
     "nome", "tipo", "nomeFantasia", "cidade", "uf",
@@ -528,7 +516,7 @@ const CAMPOS = [
 ];
 
 /* =========================================================
-   RASCUNHO (localStorage)
+   RASCUNHO
 ========================================================= */
 function salvarRascunho() {
     const rascunho = {};
@@ -536,23 +524,17 @@ function salvarRascunho() {
         const el = document.getElementById(id);
         if (el) rascunho[id] = el.value;
     });
-
     const temAlgo = Object.values(rascunho).some(v => v && v.trim());
-    if (temAlgo) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(rascunho));
-    } else {
-        localStorage.removeItem(STORAGE_KEY);
-    }
+    if (temAlgo) localStorage.setItem(STORAGE_KEY, JSON.stringify(rascunho));
+    else localStorage.removeItem(STORAGE_KEY);
 }
 
 function restaurarRascunho() {
     const bruto = localStorage.getItem(STORAGE_KEY);
     if (!bruto) return false;
-
     try {
         const rascunho = JSON.parse(bruto);
         let restaurou = false;
-
         CAMPOS.forEach(id => {
             const el = document.getElementById(id);
             if (el && rascunho[id] != null && rascunho[id] !== "") {
@@ -560,7 +542,6 @@ function restaurarRascunho() {
                 restaurou = true;
             }
         });
-
         return restaurou;
     } catch (e) {
         console.warn("Rascunho inválido:", e);
@@ -568,13 +549,8 @@ function restaurarRascunho() {
     }
 }
 
-function limparRascunho() {
-    localStorage.removeItem(STORAGE_KEY);
-}
+function limparRascunho() { localStorage.removeItem(STORAGE_KEY); }
 
-/* =========================================================
-   SALVAMENTO AUTOMÁTICO
-========================================================= */
 CAMPOS.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -600,22 +576,19 @@ inputCnpj.addEventListener("input", e => {
 });
 
 /* =========================================================
-   BUSCA CEP (ViaCEP)
+   BUSCA CEP
 ========================================================= */
 async function buscarCep(cep) {
     const limpo = cep.replace(/\D/g, "");
     if (limpo.length !== 8) return;
-
     try {
         const resp = await fetch(`https://viacep.com.br/ws/${limpo}/json/`);
         const dados = await resp.json();
         if (dados.erro) return;
-
         document.getElementById("endereco").value = (dados.logradouro || "").toUpperCase();
         document.getElementById("bairro").value = (dados.bairro || "").toUpperCase();
         document.getElementById("cidade").value = (dados.localidade || "").toUpperCase();
         document.getElementById("uf").value = (dados.uf || "").toUpperCase();
-
         salvarRascunho();
         document.getElementById("numero").focus();
     } catch (e) {
@@ -630,7 +603,7 @@ inputCep.addEventListener("input", e => {
 });
 
 /* =========================================================
-   BUSCA CNPJ (BrasilAPI)
+   BUSCA CNPJ
 ========================================================= */
 async function buscarCnpj(cnpj) {
     const limpo = cnpj.replace(/\D/g, "");
@@ -644,9 +617,7 @@ async function buscarCnpj(cnpj) {
 
         const setSeVazio = (id, valor) => {
             const el = document.getElementById(id);
-            if (el && !el.value.trim() && valor) {
-                el.value = String(valor).toUpperCase();
-            }
+            if (el && !el.value.trim() && valor) el.value = String(valor).toUpperCase();
         };
 
         setSeVazio("nome", dados.razao_social || "");
@@ -675,7 +646,7 @@ inputCnpj.addEventListener("input", e => {
 });
 
 /* =========================================================
-   PEGAR DADOS (CAIXA ALTA, exceto e-mail)
+   PEGAR DADOS
 ========================================================= */
 function pegarDados() {
     return {
@@ -697,14 +668,48 @@ function pegarDados() {
 }
 
 /* =========================================================
-   CADASTRAR
+   HASH DOS DADOS (para saber se mudou algo)
 ========================================================= */
-document.getElementById("formCadastro").addEventListener("submit", async function(e) {
-    e.preventDefault();
-    const dados = pegarDados();
-    const btn = e.target.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    document.getElementById("carregando").style.display = "block";
+function hashDados(dados) {
+    return JSON.stringify(dados);
+}
+
+/* =========================================================
+   MENSAGENS
+========================================================= */
+function mostrarMensagem(texto, tipo) {
+    const box = document.getElementById("mensagem");
+    box.textContent = texto;
+    box.className = "mensagem " + tipo;
+    box.style.display = "block";
+}
+function esconderMensagem() {
+    const box = document.getElementById("mensagem");
+    box.style.display = "none";
+    box.textContent = "";
+}
+
+/* =========================================================
+   VALIDAÇÃO MÍNIMA
+========================================================= */
+function validarDados(dados) {
+    if (!dados.nome) return "Informe o nome do cliente antes de continuar.";
+    if (!dados.tipo) return "Selecione o tipo (Física/Jurídica).";
+    if (!dados.cidade) return "Informe a cidade.";
+    return null;
+}
+
+/* =========================================================
+   SALVAR NO BACKEND (se necessário)
+   - Retorna { ok: true, dados } ou { ok: false, erro }
+========================================================= */
+async function salvarSeNecessario(dados) {
+    const hashAtual = hashDados(dados);
+
+    // Se já salvou exatamente estes dados nesta sessão, não salva de novo
+    if (ultimoCadastro && ultimoCadastroHash === hashAtual) {
+        return { ok: true, dados: ultimoCadastro, jaSalvo: true };
+    }
 
     try {
         const resposta = await fetch(URL_API, {
@@ -712,64 +717,85 @@ document.getElementById("formCadastro").addEventListener("submit", async functio
             body: JSON.stringify({ acao: "cadastrar", dados: dados })
         });
         const resultado = await resposta.json();
-        if (!resultado.sucesso) throw new Error(resultado.erro);
+
+        if (!resultado.sucesso) {
+            return { ok: false, erro: resultado.erro || "Erro desconhecido ao salvar." };
+        }
 
         ultimoCadastro = { ...dados, id: resultado.id };
+        ultimoCadastroHash = hashAtual;
 
-        limparRascunho();
-
-        document.getElementById("resultado").style.display = "block";
-        document.getElementById("formCadastro").style.display = "none";
-    } catch(erro) {
-        alert("Erro ao salvar cadastro:\n\n" + erro.message);
-    } finally {
-        btn.disabled = false;
-        document.getElementById("carregando").style.display = "none";
+        return { ok: true, dados: ultimoCadastro, jaSalvo: false };
+    } catch (e) {
+        return { ok: false, erro: "Falha de conexão: " + e.message };
     }
-});
-
-/* =========================================================
-   LIMPAR FORMULÁRIO
-========================================================= */
-function limparFormulario() {
-    const temAlgo = CAMPOS.some(id => {
-        const el = document.getElementById(id);
-        return el && el.value.trim();
-    });
-
-    if (temAlgo && !confirm("Tem certeza que deseja limpar todos os campos do formulário?\n\nO rascunho salvo também será apagado.")) {
-        return;
-    }
-
-    document.getElementById("formCadastro").reset();
-    limparRascunho();
-    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 /* =========================================================
-   GERAR PDF — via jsPDF (nativo, sem html2canvas)
+   AÇÃO BASE: valida → salva → executa callback
+========================================================= */
+async function executarComSalvamento(btn, textoCarregando, acaoFinal) {
+    esconderMensagem();
+
+    const dados = pegarDados();
+
+    const erroValidacao = validarDados(dados);
+    if (erroValidacao) {
+        mostrarMensagem(erroValidacao, "erro");
+        return;
+    }
+
+    const carregando = document.getElementById("carregando");
+    const textoOriginal = carregando.textContent;
+
+    btn.disabled = true;
+    carregando.textContent = textoCarregando;
+    carregando.style.display = "block";
+
+    try {
+        const resultado = await salvarSeNecessario(dados);
+
+        if (!resultado.ok) {
+            mostrarMensagem("Não foi possível salvar: " + resultado.erro, "erro");
+            return;
+        }
+
+        // Executa a ação final (PDF ou WhatsApp) com os dados salvos
+        acaoFinal(resultado.dados);
+
+    } catch (e) {
+        mostrarMensagem("Erro inesperado: " + e.message, "erro");
+    } finally {
+        btn.disabled = false;
+        carregando.textContent = textoOriginal;
+        carregando.style.display = "none";
+    }
+}
+
+/* =========================================================
+   GERAR PDF (salva antes)
 ========================================================= */
 function gerarPDF() {
-    if (!ultimoCadastro) {
-        alert("Nenhum cadastro para gerar PDF.");
-        return;
-    }
+    const btn = document.getElementById("btnPDF");
+    executarComSalvamento(btn, "Salvando cadastro...", function(c) {
+        try {
+            gerarPDFInterno(c);
+            mostrarMensagem("Cliente salvo e PDF gerado com sucesso!", "sucesso");
+        } catch (e) {
+            mostrarMensagem("Salvo no sistema, mas erro ao gerar PDF: " + e.message, "erro");
+        }
+    });
+}
 
-    const c = ultimoCadastro;
+function gerarPDFInterno(c) {
     const { jsPDF } = window.jspdf;
-
-    if (!jsPDF) {
-        alert("Biblioteca jsPDF não carregada. Verifique sua conexão.");
-        return;
-    }
+    if (!jsPDF) throw new Error("Biblioteca jsPDF não carregada.");
 
     const doc = new jsPDF({ unit: "mm", format: "a4" });
-
     const PAGE_W = 210;
     const MARGIN = 20;
     let y = 25;
 
-    /* ---------- Cabeçalho ---------- */
     doc.setFillColor(15, 23, 42);
     doc.rect(0, 0, PAGE_W, 32, "F");
 
@@ -785,7 +811,6 @@ function gerarPDF() {
 
     y = 45;
 
-    /* ---------- Bloco: DADOS DO CLIENTE ---------- */
     doc.setTextColor(15, 23, 42);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -797,7 +822,6 @@ function gerarPDF() {
     doc.line(MARGIN, y, MARGIN + 40, y);
     y += 8;
 
-    /* ---------- Campos ---------- */
     function campo(label, valor, destaque = false) {
         doc.setFont("helvetica", "bold");
         doc.setFontSize(8);
@@ -809,13 +833,9 @@ function gerarPDF() {
         doc.setTextColor(15, 23, 42);
 
         const texto = String(valor || "—").toUpperCase();
-
         const maxWidth = PAGE_W - MARGIN * 2;
         const linhas = doc.splitTextToSize(texto, maxWidth);
-        linhas.forEach((linha, i) => {
-            doc.text(linha, MARGIN, y + 5 + (i * 5));
-        });
-
+        linhas.forEach((linha, i) => doc.text(linha, MARGIN, y + 5 + (i * 5)));
         y += 12 + (linhas.length - 1) * 5;
     }
 
@@ -839,7 +859,6 @@ function gerarPDF() {
 
     y += 3;
 
-    /* ---------- Bloco: ENDEREÇO ---------- */
     doc.setTextColor(15, 23, 42);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -883,7 +902,6 @@ function gerarPDF() {
     doc.text(String(c.uf || "—").toUpperCase(), MARGIN + 120, y + 5);
     y += 15;
 
-    /* ---------- Bloco: CONTATO ---------- */
     doc.setTextColor(15, 23, 42);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -898,7 +916,6 @@ function gerarPDF() {
     if (c.telefone) campo("TELEFONE", c.telefone);
     if (c.email) campo("E-MAIL", c.email.toLowerCase());
 
-    /* ---------- Rodapé ---------- */
     const footerY = 280;
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.3);
@@ -912,7 +929,6 @@ function gerarPDF() {
     doc.text("GERADO EM: " + dataAtual, MARGIN, footerY);
     doc.text("PÁGINA 1 DE 1", PAGE_W - MARGIN, footerY, { align: "right" });
 
-    /* ---------- Salvar ---------- */
     const nomeArquivo = "Cadastro_" + (c.nome || "cliente")
         .replace(/[^\w\s-]/gi, "")
         .replace(/\s+/g, "_")
@@ -922,17 +938,12 @@ function gerarPDF() {
 }
 
 /* =========================================================
-   WHATSAPP — ENVIO DIRETO PARA NÚMERO FIXO
-   Destino: +55 88 98176-2208
+   WHATSAPP (salva antes)
 ========================================================= */
 function enviarWhatsApp() {
-    const c = ultimoCadastro;
-    if (!c) {
-        alert("Nenhum cadastro para enviar.");
-        return;
-    }
-
-    const mensagem = `CADASTRO DO CLIENTE
+    const btn = document.getElementById("btnWhatsApp");
+    executarComSalvamento(btn, "Salvando cadastro...", function(c) {
+        const mensagem = `CADASTRO DO CLIENTE
 
 NOME: ${c.nome}
 TIPO: ${c.tipo}
@@ -947,18 +958,29 @@ IE/RG: ${c.ieRg || "—"}
 TELEFONE: ${c.telefone}
 E-MAIL: ${c.email}`;
 
-    const url = "https://wa.me/" + WHATSAPP_DESTINO + "?text=" + encodeURIComponent(mensagem);
-    window.open(url, "_blank");
+        const url = "https://wa.me/" + WHATSAPP_DESTINO + "?text=" + encodeURIComponent(mensagem);
+        window.open(url, "_blank");
+        mostrarMensagem("Cliente salvo e WhatsApp aberto com a mensagem.", "sucesso");
+    });
 }
 
 /* =========================================================
-   NOVO CADASTRO
+   LIMPAR FORMULÁRIO
 ========================================================= */
-function novoCadastro() {
+function limparFormulario() {
+    const temAlgo = CAMPOS.some(id => {
+        const el = document.getElementById(id);
+        return el && el.value.trim();
+    });
+
+    if (temAlgo && !confirm("Tem certeza que deseja limpar todos os campos do formulário?\n\nO rascunho salvo também será apagado.")) {
+        return;
+    }
+
     document.getElementById("formCadastro").reset();
-    document.getElementById("formCadastro").style.display = "block";
-    document.getElementById("resultado").style.display = "none";
     ultimoCadastro = null;
+    ultimoCadastroHash = null;
+    esconderMensagem();
     limparRascunho();
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -989,7 +1011,6 @@ function novoCadastro() {
             text-transform: uppercase;
         `;
         document.body.appendChild(aviso);
-
         setTimeout(() => {
             aviso.style.transition = "opacity .4s";
             aviso.style.opacity = "0";
