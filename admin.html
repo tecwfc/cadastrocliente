@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,12 +30,16 @@
     --shadow-lg: 0 20px 60px rgba(15,23,42,.10);
 }
 
+html { -webkit-text-size-adjust: 100%; }
+
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: var(--bg);
     background-image: var(--bg-decor);
+    background-attachment: fixed;
     color: var(--text);
     min-height: 100vh;
+    min-height: 100dvh;
     padding: 32px 20px;
     -webkit-font-smoothing: antialiased;
 }
@@ -57,6 +61,7 @@ body {
     font-weight: 800;
     letter-spacing: -.03em;
     margin-bottom: 6px;
+    line-height: 1.1;
 }
 
 .topo-left h1 span {
@@ -74,6 +79,7 @@ body {
 .btn-atualizar {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     background: var(--surface);
     color: var(--text);
@@ -86,6 +92,7 @@ body {
     cursor: pointer;
     transition: all .2s;
     box-shadow: var(--shadow-sm);
+    min-height: 44px;
 }
 
 .btn-atualizar:hover {
@@ -94,7 +101,7 @@ body {
     transform: translateY(-1px);
     box-shadow: var(--shadow);
 }
-
+.btn-atualizar:active { transform: scale(.98); }
 .btn-atualizar svg { width: 16px; height: 16px; }
 
 /* Card */
@@ -117,8 +124,9 @@ body {
 
 .search-wrap {
     position: relative;
-    flex: 1;
+    flex: 1 1 260px;
     max-width: 420px;
+    min-width: 0;
 }
 
 .search-wrap svg {
@@ -137,11 +145,12 @@ body {
     padding: 13px 16px 13px 46px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    font-size: 14.5px;
+    font-size: 16px; /* evita zoom no iOS */
     font-family: inherit;
     background: #fbfcfe;
     transition: all .2s;
     outline: none;
+    min-height: 48px;
 }
 
 .pesquisa:focus {
@@ -157,10 +166,11 @@ body {
     background: #f1f5f9;
     padding: 8px 14px;
     border-radius: 999px;
+    white-space: nowrap;
 }
 
 /* Tabela */
-.tabela-wrapper { overflow-x: auto; border-radius: var(--radius-sm); }
+.tabela-wrapper { overflow-x: auto; border-radius: var(--radius-sm); -webkit-overflow-scrolling: touch; }
 
 .tabela {
     width: 100%;
@@ -215,7 +225,7 @@ body {
 .acoes { display: flex; gap: 6px; justify-content: flex-end; }
 
 .btn-acao {
-    width: 34px; height: 34px;
+    width: 36px; height: 36px;
     border: 1.5px solid var(--border);
     border-radius: 9px;
     background: var(--surface);
@@ -224,11 +234,13 @@ body {
     place-items: center;
     transition: all .18s;
     color: var(--text-soft);
+    flex-shrink: 0;
 }
 
 .btn-acao svg { width: 15px; height: 15px; }
 
 .btn-acao:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.btn-acao:active { transform: scale(.94); }
 
 .btn-acao.editar:hover { background: #eff6ff; border-color: #93c5fd; color: #2563eb; }
 .btn-acao.pdf:hover { background: #f8fafc; border-color: #cbd5e1; color: #334155; }
@@ -251,6 +263,7 @@ body {
     inset: 0;
     background: rgba(15,23,42,.55);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     padding: 20px;
     overflow: auto;
     z-index: 100;
@@ -327,12 +340,13 @@ input, select {
     padding: 12px 15px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    font-size: 14px;
+    font-size: 16px; /* evita zoom no iOS */
     font-family: inherit;
     color: var(--text);
     background: #fbfcfe;
     transition: all .2s;
     outline: none;
+    min-height: 48px;
 }
 
 input:hover, select:hover { border-color: #d1d9e6; }
@@ -366,12 +380,14 @@ input:focus, select:focus {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    min-height: 48px;
 }
 .salvar:hover {
     background: #1e293b;
     transform: translateY(-1px);
     box-shadow: 0 10px 28px rgba(15,23,42,.25);
 }
+.salvar:active { transform: scale(.98); }
 
 .fechar {
     flex: 0 0 auto;
@@ -385,10 +401,12 @@ input:focus, select:focus {
     font-family: inherit;
     cursor: pointer;
     transition: all .2s;
+    min-height: 48px;
 }
 .fechar:hover { background: #f8fafc; border-color: #cbd5e1; }
+.fechar:active { transform: scale(.98); }
 
-/* PDF area */
+/* PDF area (oculta) */
 .pdf-area {
     position: absolute;
     left: -10000px;
@@ -397,25 +415,145 @@ input:focus, select:focus {
     padding: 50px;
     font-family: 'Inter', Arial, sans-serif;
 }
-
 .pdf-area h1 { text-align: center; font-size: 24px; margin-bottom: 8px; letter-spacing: .05em; }
 .pdf-sub { text-align: center; color: #64748b; font-size: 12px; margin-bottom: 30px; }
 .pdf-titulo { border-bottom: 2px solid #0f172a; margin-bottom: 30px; }
 .pdf-linha { margin: 14px 0; font-size: 14px; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; }
 .pdf-linha strong { display: inline-block; width: 180px; color: #475569; }
 
-/* Responsivo */
-@media (max-width: 720px) {
-    body { padding: 20px 14px; }
-    .topo-left h1 { font-size: 24px; }
+/* =========================================================
+   RESPONSIVO (textos menores)
+========================================================= */
+
+/* Tablet */
+@media (max-width: 900px) {
+    body { padding: 22px 14px; }
+    .topo-left h1 { font-size: 22px; }
+    .topo-left p { font-size: 12px; }
     .card { padding: 20px; }
-    .grid { grid-template-columns: 1fr; }
-    .campo.full { grid-column: auto; }
-    .tabela th, .tabela td { padding: 12px; font-size: 13px; }
-    .modal-box { padding: 24px; }
-    .modal-actions { flex-direction: column; }
-    .fechar { width: 100%; }
+    .grid { gap: 14px; }
+    .modal-box { padding: 24px; margin: 20px auto; }
+    label { font-size: 12px; }
+    input, select { font-size: 15px; padding: 11px 13px; min-height: 44px; }
+    .tabela td { font-size: 13px; padding: 13px; }
+    .tabela th { font-size: 10.5px; padding: 12px 13px; }
 }
+
+/* Celular — tabela vira cards */
+@media (max-width: 680px) {
+    body { padding: 14px 10px; }
+
+    .topo { flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 16px; }
+    .topo-left h1 { font-size: 18px; }
+    .topo-left p { font-size: 11px; }
+    .btn-atualizar { width: 100%; font-size: 12.5px; padding: 10px 16px; min-height: 40px; }
+
+    .card { padding: 14px; border-radius: 12px; }
+
+    .card-toolbar { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 14px; }
+    .search-wrap { max-width: none; flex: 1 1 auto; }
+    .pesquisa { font-size: 15px; padding: 11px 14px 11px 40px; min-height: 42px; }
+    .search-wrap svg { width: 16px; height: 16px; left: 13px; }
+    .contador { align-self: flex-start; font-size: 11px; padding: 5px 10px; }
+
+    .tabela thead { display: none; }
+    .tabela, .tabela tbody, .tabela tr, .tabela td { display: block; width: 100%; }
+
+    .tabela tbody tr {
+        background: #fbfcfe;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    .tabela tbody tr:hover { background: #fbfcfe; }
+
+    .tabela td {
+        padding: 0;
+        border: none;
+        font-size: 12.5px;
+        line-height: 1.35;
+    }
+
+    .tabela td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+        margin-bottom: 2px;
+        margin-top: 8px;
+    }
+    .tabela td:first-child::before { margin-top: 0; }
+
+    .tabela td[data-label="Nome"] {
+        font-size: 14px;
+        padding-bottom: 6px;
+        margin-bottom: 3px;
+        border-bottom: 1px dashed var(--border);
+    }
+    .tabela td[data-label="Nome"]::before { display: none; }
+    .tabela td[data-label="Nome"] .nome { font-weight: 700; }
+    .tabela td[data-label="Ações"]::before { display: none; }
+
+    .tabela td .tipo-tag { font-size: 10.5px; padding: 3px 8px; }
+
+    .acoes { justify-content: space-between; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .btn-acao { width: 40px; height: 40px; border-radius: 9px; flex: 1; max-width: 58px; }
+    .btn-acao svg { width: 15px; height: 15px; }
+
+    /* Modal full-screen */
+    .modal { padding: 0; }
+    .modal-box {
+        max-width: none;
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border-radius: 0;
+        padding: 16px 12px 22px;
+    }
+    .modal-header { margin-bottom: 16px; padding-bottom: 14px; gap: 10px; }
+    .modal-header .icon { width: 36px; height: 36px; border-radius: 10px; }
+    .modal-header .icon svg { width: 17px; height: 17px; }
+    .modal-header h2 { font-size: 15px; }
+    .modal-header p { font-size: 11px; }
+
+    .grid { grid-template-columns: 1fr; gap: 11px; }
+    .campo.full { grid-column: auto; }
+
+    label { font-size: 11.5px; margin-bottom: 6px; }
+    input, select { font-size: 15px; padding: 10px 12px; min-height: 42px; }
+
+    .modal-actions { flex-direction: column; margin-top: 18px; gap: 10px; }
+    .salvar, .fechar { width: 100%; font-size: 13px; padding: 12px; min-height: 44px; }
+    .salvar svg { width: 14px; height: 14px; }
+
+    .vazio { padding: 32px 14px; }
+    .vazio p { font-size: 13px; }
+    .vazio svg { width: 40px; height: 40px; margin-bottom: 12px; }
+}
+
+/* Celular bem estreito */
+@media (max-width: 380px) {
+    .topo-left h1 { font-size: 16px; }
+    .tabela td { font-size: 12px; }
+    .tabela td[data-label="Nome"] { font-size: 13px; }
+    .btn-acao { width: 36px; height: 36px; }
+    .btn-acao svg { width: 13px; height: 13px; }
+    .tabela tbody tr { padding: 10px; }
+    input, select, .pesquisa { font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
 </style>
 </head>
 
@@ -700,13 +838,12 @@ editCpfCnpj.addEventListener("input", e => {
     }
 });
 
-// Máscara de telefone no modal
 document.getElementById("editTelefone").addEventListener("input", e => {
     e.target.value = mascaraTelefone(e.target.value);
 });
 
 /* =========================================================
-   RESTANTE (carregar, mostrar, editar, salvar, excluir...)
+   CARREGAR / MOSTRAR
 ========================================================= */
 async function carregarClientes() {
     try {
@@ -739,23 +876,23 @@ function mostrarClientes(lista) {
         const tipoClass = c.tipo === "Jurídica" ? "juridica" : "";
 
         tr.innerHTML = `
-            <td><span class="nome">${esc(c.nome)}</span></td>
-            <td><span class="tipo-tag ${tipoClass}">${esc(c.tipo)}</span></td>
-            <td>${esc(c.cidade)}/${esc(c.uf)}</td>
-            <td>${esc(c.cpfCnpj)}</td>
-            <td>${esc(c.telefone)}</td>
-            <td>
+            <td data-label="Nome"><span class="nome">${esc(c.nome)}</span></td>
+            <td data-label="Tipo"><span class="tipo-tag ${tipoClass}">${esc(c.tipo)}</span></td>
+            <td data-label="Cidade">${esc(c.cidade)}/${esc(c.uf)}</td>
+            <td data-label="CPF/CNPJ">${esc(c.cpfCnpj)}</td>
+            <td data-label="Telefone">${esc(c.telefone)}</td>
+            <td data-label="Ações">
                 <div class="acoes">
-                    <button class="btn-acao editar" title="Editar" onclick="editar('${c.id}')">
+                    <button class="btn-acao editar" title="Editar" aria-label="Editar" onclick="editar('${c.id}')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                     </button>
-                    <button class="btn-acao pdf" title="Gerar PDF" onclick="gerarPDF('${c.id}')">
+                    <button class="btn-acao pdf" title="Gerar PDF" aria-label="Gerar PDF" onclick="gerarPDF('${c.id}')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     </button>
-                    <button class="btn-acao whatsapp" title="WhatsApp" onclick="whatsapp('${c.id}')">
+                    <button class="btn-acao whatsapp" title="WhatsApp" aria-label="WhatsApp" onclick="whatsapp('${c.id}')">
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
                     </button>
-                    <button class="btn-acao excluir" title="Excluir" onclick="excluir('${c.id}')">
+                    <button class="btn-acao excluir" title="Excluir" aria-label="Excluir" onclick="excluir('${c.id}')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                 </div>
@@ -809,6 +946,7 @@ function editar(id) {
 
     document.getElementById("modal").style.display = "block";
     document.body.style.overflow = "hidden";
+    document.getElementById("editNome").focus();
 }
 
 async function salvarEdicao() {
@@ -862,6 +1000,9 @@ async function excluir(id) {
     }
 }
 
+/* =========================================================
+   GERAR PDF
+========================================================= */
 function gerarPDF(id) {
     const c = clientes.find(x => String(x.id) === String(id));
     if (!c) {
@@ -880,7 +1021,6 @@ function gerarPDF(id) {
     const MARGIN = 20;
     let y = 25;
 
-    /* Cabeçalho */
     doc.setFillColor(15, 23, 42);
     doc.rect(0, 0, PAGE_W, 32, "F");
 
@@ -924,7 +1064,6 @@ function gerarPDF(id) {
         y += 12 + (linhas.length - 1) * 5;
     }
 
-    /* Dados do cliente */
     secao("DADOS DO CLIENTE");
     campo("NOME / RAZÃO SOCIAL", c.nome, true);
 
@@ -944,7 +1083,6 @@ function gerarPDF(id) {
     if (c.ieRg) campo("IE / RG", c.ieRg);
     y += 3;
 
-    /* Endereço */
     secao("ENDEREÇO");
 
     doc.setFont("helvetica", "bold");
@@ -977,12 +1115,10 @@ function gerarPDF(id) {
     doc.text(String(c.uf || "—").toUpperCase(), MARGIN + 120, y + 5);
     y += 15;
 
-    /* Contato */
     secao("CONTATO");
     if (c.telefone) campo("TELEFONE", c.telefone);
     if (c.email) campo("E-MAIL", c.email.toLowerCase());
 
-    /* Rodapé */
     const footerY = 280;
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.3);
@@ -1001,12 +1137,12 @@ function gerarPDF(id) {
 
     doc.save(nomeArquivo);
 }
-    
+
 function whatsapp(id) {
     const c = clientes.find(x => String(x.id) === String(id));
     if (!c) return;
 
-    let telefone = c.telefone.replace(/\D/g, "");
+    let telefone = (c.telefone || "").replace(/\D/g, "");
     if (telefone) telefone = "55" + telefone;
 
     const mensagem = `Cadastro do cliente:
@@ -1044,7 +1180,6 @@ document.addEventListener("keydown", function(e) {
 
 carregarClientes();
 </script>
-
 
 </body>
 </html>
