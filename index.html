@@ -386,7 +386,7 @@ input:disabled, select:disabled {
                 </div>
 
                 <div class="campo">
-                    <label>IE/RG <span class="req">*</span></label>
+                    <label>INSCRIÇÃO ESTADUAL/RG <span class="req">*</span></label>
                     <input id="ieRg" placeholder="Inscrição estadual ou RG" required>
                 </div>
 
@@ -855,7 +855,7 @@ function gerarPDFInterno(c) {
     y += 12;
 
     if (c.nomeFantasia) campo("NOME FANTASIA", c.nomeFantasia);
-    if (c.ieRg) campo("IE / RG", c.ieRg);
+    if (c.ieRg) campo("INSCRIÇÃO ESTADUAL / RG", c.ieRg);
 
     y += 3;
 
@@ -954,7 +954,7 @@ COMPLEMENTO: ${c.complemento || "—"}
 CEP: ${c.cep}
 BAIRRO: ${c.bairro}
 CPF/CNPJ: ${c.cpfCnpj}
-IE/RG: ${c.ieRg || "—"}
+INSCRIÇÃO ESTADUAL/RG: ${c.ieRg || "—"}
 TELEFONE: ${c.telefone}
 E-MAIL: ${c.email}`;
 
