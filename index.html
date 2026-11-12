@@ -11,11 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
             --bg: #f4f6fb;
@@ -44,310 +40,166 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 880px;
-            margin: 0 auto;
-        }
+        .container { max-width: 880px; margin: 0 auto; }
 
-        .hero {
-            text-align: center;
-            margin-bottom: 36px;
-        }
+        .hero { text-align: center; margin-bottom: 36px; }
 
         .hero .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 8px 16px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-soft);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 18px;
-            text-transform: uppercase;
-            letter-spacing: .06em;
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--surface); border: 1px solid var(--border);
+            padding: 8px 16px; border-radius: 999px;
+            font-size: 12px; font-weight: 700; color: var(--text-soft);
+            box-shadow: var(--shadow-sm); margin-bottom: 18px;
+            text-transform: uppercase; letter-spacing: .06em;
         }
 
         .hero .badge .dot {
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, .15);
+            width: 8px; height: 8px; background: var(--accent);
+            border-radius: 50%; box-shadow: 0 0 0 4px rgba(16, 185, 129, .15);
         }
 
         .hero h1 {
-            font-size: 38px;
-            font-weight: 800;
-            letter-spacing: -.02em;
-            margin-bottom: 10px;
+            font-size: 38px; font-weight: 800;
+            letter-spacing: -.02em; margin-bottom: 10px;
             text-transform: uppercase;
         }
 
         .hero h1 span {
             background: linear-gradient(135deg, #10b981, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .hero p {
-            color: var(--text-soft);
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            font-weight: 500;
+            color: var(--text-soft); font-size: 14px;
+            text-transform: uppercase; letter-spacing: .04em; font-weight: 500;
         }
 
         .card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 40px;
-            box-shadow: var(--shadow-lg);
+            background: var(--surface); border-radius: var(--radius);
+            padding: 40px; box-shadow: var(--shadow-lg);
             border: 1px solid var(--border);
         }
 
         .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 28px;
-            padding-bottom: 24px;
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 28px; padding-bottom: 24px;
             border-bottom: 1px solid var(--border);
         }
 
         .card-header .icon {
-            width: 44px;
-            height: 44px;
+            width: 44px; height: 44px;
             background: linear-gradient(135deg, #0f172a, #334155);
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            color: white;
-            flex-shrink: 0;
+            border-radius: 12px; display: grid; place-items: center;
+            color: white; flex-shrink: 0;
         }
 
         .card-header h2 {
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: .02em;
-            text-transform: uppercase;
+            font-size: 16px; font-weight: 700;
+            letter-spacing: .02em; text-transform: uppercase;
         }
 
         .card-header p {
-            font-size: 12px;
-            color: var(--text-soft);
-            margin-top: 2px;
-            text-transform: uppercase;
-            letter-spacing: .04em;
+            font-size: 12px; color: var(--text-soft); margin-top: 2px;
+            text-transform: uppercase; letter-spacing: .04em;
         }
 
         .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
         }
 
-        .campo {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .campo.full {
-            grid-column: 1 / -1;
-        }
+        .campo { display: flex; flex-direction: column; }
+        .campo.full { grid-column: 1 / -1; }
 
         label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 12px;
-            color: var(--text);
-            letter-spacing: .05em;
-            text-transform: uppercase;
+            font-weight: 600; margin-bottom: 8px; font-size: 12px;
+            color: var(--text); letter-spacing: .05em; text-transform: uppercase;
         }
 
-        label .req {
-            color: var(--danger);
-            margin-left: 2px;
-        }
+        label .req { color: var(--danger); margin-left: 2px; }
 
-        input,
-        select {
-            width: 100%;
-            padding: 13px 16px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            font-family: inherit;
-            color: var(--text);
-            background: #fbfcfe;
-            transition: all .2s;
-            outline: none;
-            text-transform: uppercase;
-            letter-spacing: .02em;
+        input, select {
+            width: 100%; padding: 13px 16px;
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            font-size: 14px; font-family: inherit; color: var(--text);
+            background: #fbfcfe; transition: all .2s; outline: none;
+            text-transform: uppercase; letter-spacing: .02em;
         }
 
         input::placeholder {
-            color: #94a3b8;
-            text-transform: none;
-            font-weight: 400;
-            letter-spacing: 0;
+            color: #94a3b8; text-transform: none;
+            font-weight: 400; letter-spacing: 0;
         }
 
-        input[type="date"] {
-            text-transform: none;
-        }
+        input[type="date"] { text-transform: none; }
 
-        input:hover,
-        select:hover {
-            border-color: #d1d9e6;
-        }
+        input:hover, select:hover { border-color: #d1d9e6; }
 
-        input:focus,
-        select:focus {
-            border-color: var(--primary);
-            background: var(--surface);
+        input:focus, select:focus {
+            border-color: var(--primary); background: var(--surface);
             box-shadow: 0 0 0 4px rgba(15, 23, 42, .06);
         }
 
         .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            font-weight: 700;
-            font-family: inherit;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all .2s;
-            letter-spacing: .06em;
+            width: 100%; padding: 15px; border: none;
+            border-radius: var(--radius-sm); font-size: 13px;
+            font-weight: 700; font-family: inherit; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 10px; transition: all .2s; letter-spacing: .06em;
             text-transform: uppercase;
         }
 
-        .btn svg {
-            width: 18px;
-            height: 18px;
-        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn:active { transform: scale(.98); }
 
-        .btn:active {
-            transform: scale(.98);
-        }
-
-        .btn-pdf {
-            background: #475569;
-            color: white;
-        }
-
+        .btn-pdf { background: #475569; color: white; }
         .btn-pdf:hover {
-            background: #334155;
-            transform: translateY(-1px);
+            background: #334155; transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(71, 85, 105, .2);
         }
 
-        .btn-whatsapp {
-            background: var(--accent);
-            color: white;
-        }
-
+        .btn-whatsapp { background: var(--accent); color: white; }
         .btn-whatsapp:hover {
-            background: #059669;
-            transform: translateY(-1px);
+            background: #059669; transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, .2);
         }
 
         .btn-limpar {
-            background: transparent;
-            color: var(--text-soft);
-            border: 1.5px dashed var(--border);
-            margin-top: 14px;
-            font-weight: 600;
+            background: transparent; color: var(--text-soft);
+            border: 1.5px dashed var(--border); margin-top: 14px; font-weight: 600;
         }
 
         .btn-limpar:hover {
-            background: #fef2f2;
-            border-color: #fca5a5;
-            color: #dc2626;
-            border-style: solid;
+            background: #fef2f2; border-color: #fca5a5;
+            color: #dc2626; border-style: solid;
         }
 
-        .botoes-acao {
-            display: flex;
-            gap: 12px;
-            margin-top: 28px;
-        }
-
-        .botoes-acao .btn {
-            width: 50%;
-        }
+        .botoes-acao { display: flex; gap: 12px; margin-top: 28px; }
+        .botoes-acao .btn { width: 50%; }
 
         .carregando {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: var(--text-soft);
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: .06em;
+            display: none; text-align: center; padding: 20px;
+            color: var(--text-soft); font-weight: 600; font-size: 12px;
+            text-transform: uppercase; letter-spacing: .06em;
         }
 
         .carregando::before {
-            content: "";
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2.5px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            margin-right: 10px;
-            vertical-align: middle;
+            content: ""; display: inline-block; width: 16px; height: 16px;
+            border: 2.5px solid var(--border); border-top-color: var(--primary);
+            border-radius: 50%; margin-right: 10px; vertical-align: middle;
             animation: spin .7s linear infinite;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 680px) {
-            body {
-                padding: 20px 14px;
-            }
-
-            .hero h1 {
-                font-size: 26px;
-            }
-
-            .card {
-                padding: 24px;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .campo.full {
-                grid-column: auto;
-            }
-
-            .botoes-acao {
-                flex-direction: column;
-                gap: 10px;
-                margin-top: 20px;
-            }
-
-            .botoes-acao .btn {
-                width: 100%;
-            }
+            body { padding: 20px 14px; }
+            .hero h1 { font-size: 26px; }
+            .card { padding: 24px; }
+            .grid { grid-template-columns: 1fr; gap: 16px; }
+            .campo.full { grid-column: auto; }
+            .botoes-acao { flex-direction: column; gap: 10px; margin-top: 20px; }
+            .botoes-acao .btn { width: 100%; }
         }
     </style>
 </head>
@@ -405,7 +257,6 @@
                         <input id="ieRg" placeholder="Inscrição estadual ou RG" required>
                     </div>
 
-                    <!-- NOVO CAMPO: Data condicional -->
                     <div class="campo">
                         <label id="labelData">DATA DE NASCIMENTO</label>
                         <input id="dataNascimento" type="date">
@@ -462,8 +313,7 @@
                     </button>
                     <button class="btn btn-whatsapp" type="button" onclick="salvarEEnviarWhatsApp()">
                         <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
                         </svg>
                         WhatsApp
                     </button>
@@ -486,7 +336,6 @@
     <script>
         const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
         const STORAGE_KEY = "rascunho_cliente_v1";
-        // const WHATSAPP_DESTINO = "5588988371213";
         const WHATSAPP_DESTINO = "5588981762208";
 
         let idCadastroAtual = null;
@@ -585,42 +434,69 @@
         document.getElementById("cep").addEventListener("blur", (e) => buscarCep(e.target.value));
         document.getElementById("cep").addEventListener("input", e => { if (e.target.value.replace(/\D/g, "").length === 8) buscarCep(e.target.value); });
 
-        /* BUSCA CNPJ */
+        /* =========================================================
+           BUSCA CNPJ — PREENCHE AUTOMATICAMENTE (SOBRESCREVENDO)
+        ========================================================= */
         async function buscarCnpj(cnpj) {
             const limpo = cnpj.replace(/\D/g, "");
             if (limpo.length !== 14) return;
             if (document.getElementById("tipo").value !== "Jurídica") return;
+
+            const carregando = document.getElementById("carregando");
+            if (carregando) carregando.style.display = "block";
+
             try {
                 const resp = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${limpo}`);
-                if (!resp.ok) return;
+                if (!resp.ok) {
+                    alert("CNPJ não encontrado na base da Receita. Confira o número.");
+                    return;
+                }
                 const dados = await resp.json();
-                const setSeVazio = (id, valor) => { const el = document.getElementById(id); if (el && !el.value.trim() && valor) el.value = String(valor).toUpperCase(); };
-                setSeVazio("nome", dados.razao_social || "");
-                setSeVazio("nomeFantasia", dados.nome_fantasia || "");
-                setSeVazio("endereco", dados.logradouro || "");
-                setSeVazio("numero", dados.numero || "");
-                setSeVazio("complemento", dados.complemento || "");
-                setSeVazio("bairro", dados.bairro || "");
-                setSeVazio("cidade", dados.municipio || "");
-                setSeVazio("uf", dados.uf || "");
-                setSeVazio("cep", mascaraCep(dados.cep || ""));
-                setSeVazio("email", (dados.email || "").toLowerCase());
-                setSeVazio("telefone", mascaraTelefone(dados.ddd_telefone_1 || ""));
 
-                // Preenche a DATA DE ABERTURA (formato yyyy-mm-dd) se estiver vazia
+                const set = (id, valor) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = valor ? String(valor).toUpperCase() : "";
+                };
+
+                set("nome", dados.razao_social || "");
+                set("nomeFantasia", dados.nome_fantasia || "");
+                set("endereco", dados.logradouro || "");
+                set("numero", dados.numero || "");
+                set("complemento", dados.complemento || "");
+                set("bairro", dados.bairro || "");
+                set("cidade", dados.municipio || "");
+                set("uf", dados.uf || "");
+                set("cep", mascaraCep(dados.cep || ""));
+
+                // E-mail e telefone: mantém minúsculo no e-mail
+                const elEmail = document.getElementById("email");
+                if (elEmail) elEmail.value = (dados.email || "").toLowerCase();
+
+                set("telefone", mascaraTelefone(dados.ddd_telefone_1 || ""));
+
+                // Data de abertura (vem em yyyy-mm-dd)
                 if (dados.data_inicio_atividade) {
                     const elData = document.getElementById("dataNascimento");
-                    if (elData && !elData.value) {
-                        elData.value = String(dados.data_inicio_atividade).substring(0, 10);
-                    }
+                    if (elData) elData.value = String(dados.data_inicio_atividade).substring(0, 10);
                 }
 
                 salvarRascunho();
                 idCadastroAtual = null;
-            } catch (e) { }
+
+            } catch (e) {
+                console.warn("Erro ao buscar CNPJ:", e);
+                alert("Não foi possível consultar o CNPJ agora. Verifique sua conexão.");
+            } finally {
+                if (carregando) carregando.style.display = "none";
+            }
         }
+
         document.getElementById("cpfCnpj").addEventListener("blur", (e) => buscarCnpj(e.target.value));
-        document.getElementById("cpfCnpj").addEventListener("input", e => { if (e.target.value.replace(/\D/g, "").length === 14 && document.getElementById("tipo").value === "Jurídica") buscarCnpj(e.target.value); });
+        document.getElementById("cpfCnpj").addEventListener("input", e => {
+            if (e.target.value.replace(/\D/g, "").length === 14 && document.getElementById("tipo").value === "Jurídica") {
+                buscarCnpj(e.target.value);
+            }
+        });
 
         /* PEGAR DADOS */
         function pegarDados() {
