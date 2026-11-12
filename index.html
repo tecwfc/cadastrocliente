@@ -1,949 +1,796 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cadastro de Cliente</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-:root {
-    --bg: #f4f6fb;
-    --bg-decor: radial-gradient(circle at 10% 10%, rgba(99,102,241,.08), transparent 40%),
-                 radial-gradient(circle at 90% 90%, rgba(16,185,129,.08), transparent 40%);
-    --surface: #ffffff;
-    --border: #e8ecf3;
-    --text: #0f172a;
-    --text-soft: #64748b;
-    --primary: #0f172a;
-    --primary-hover: #1e293b;
-    --accent: #10b981;
-    --danger: #ef4444;
-    --radius: 16px;
-    --radius-sm: 10px;
-    --shadow-sm: 0 1px 2px rgba(15,23,42,.04);
-    --shadow: 0 4px 24px rgba(15,23,42,.06);
-    --shadow-lg: 0 20px 60px rgba(15,23,42,.10);
-}
+        :root {
+            --bg: #f4f6fb;
+            --bg-decor: radial-gradient(circle at 10% 10%, rgba(99, 102, 241, .08), transparent 40%), radial-gradient(circle at 90% 90%, rgba(16, 185, 129, .08), transparent 40%);
+            --surface: #ffffff;
+            --border: #e8ecf3;
+            --text: #0f172a;
+            --text-soft: #64748b;
+            --primary: #0f172a;
+            --primary-hover: #1e293b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, .04);
+            --shadow-lg: 0 20px 60px rgba(15, 23, 42, .10);
+        }
 
-html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            background-image: var(--bg-decor);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
 
-body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: var(--bg);
-    background-image: var(--bg-decor);
-    color: var(--text);
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 40px 20px;
-    -webkit-font-smoothing: antialiased;
-}
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+        }
 
-.container { max-width: 880px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            margin-bottom: 36px;
+        }
 
-/* Header */
-.hero { text-align: center; margin-bottom: 36px; }
+        .hero .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-soft);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
 
-.hero .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-soft);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 18px;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-}
+        .hero .badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, .15);
+        }
 
-.hero .badge .dot {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px rgba(16,185,129,.15);
-}
+        .hero h1 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
 
-.hero h1 {
-    font-size: 38px;
-    font-weight: 800;
-    letter-spacing: -.02em;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-}
+        .hero h1 span {
+            background: linear-gradient(135deg, #10b981, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-.hero h1 span {
-    background: linear-gradient(135deg, #10b981, #6366f1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
+        .hero p {
+            color: var(--text-soft);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            font-weight: 500;
+        }
 
-.hero p {
-    color: var(--text-soft);
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    font-weight: 500;
-}
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
 
-/* Card */
-.card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 40px;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border);
-}
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
 
-.card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 28px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-}
+        .card-header .icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0f172a, #334155);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: white;
+            flex-shrink: 0;
+        }
 
-.card-header .icon {
-    width: 44px; height: 44px;
-    background: linear-gradient(135deg, #0f172a, #334155);
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    color: white;
-    flex-shrink: 0;
-}
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: .02em;
+            text-transform: uppercase;
+        }
 
-.card-header h2 {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: .02em;
-    text-transform: uppercase;
-}
+        .card-header p {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
 
-.card-header p {
-    font-size: 12px;
-    color: var(--text-soft);
-    margin-top: 2px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
 
-/* Grid */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-}
+        .campo {
+            display: flex;
+            flex-direction: column;
+        }
 
-.campo { display: flex; flex-direction: column; }
-.campo.full { grid-column: 1 / -1; }
+        .campo.full {
+            grid-column: 1 / -1;
+        }
 
-label {
-    font-weight: 600;
-    margin-bottom: 8px;
-    font-size: 12px;
-    color: var(--text);
-    letter-spacing: .05em;
-    text-transform: uppercase;
-}
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--text);
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
 
-label .req { color: var(--danger); margin-left: 2px; }
+        label .req {
+            color: var(--danger);
+            margin-left: 2px;
+        }
 
-input, select {
-    width: 100%;
-    padding: 13px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 16px;
-    font-family: inherit;
-    color: var(--text);
-    background: #fbfcfe;
-    transition: all .2s;
-    outline: none;
-    text-transform: uppercase;
-    letter-spacing: .02em;
-    min-height: 48px;
-}
+        input,
+        select {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text);
+            background: #fbfcfe;
+            transition: all .2s;
+            outline: none;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+        }
 
-input::placeholder {
-    color: #94a3b8;
-    text-transform: none;
-    font-weight: 400;
-    letter-spacing: 0;
-}
+        input::placeholder {
+            color: #94a3b8;
+            text-transform: none;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
 
-input:hover, select:hover { border-color: #d1d9e6; }
+        input[type="date"] {
+            text-transform: none;
+        }
 
-input:focus, select:focus {
-    border-color: var(--primary);
-    background: var(--surface);
-    box-shadow: 0 0 0 4px rgba(15,23,42,.06);
-}
+        input:hover,
+        select:hover {
+            border-color: #d1d9e6;
+        }
 
-input:disabled, select:disabled {
-    opacity: .6;
-    cursor: not-allowed;
-    background: #f1f5f9;
-}
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 4px rgba(15, 23, 42, .06);
+        }
 
-/* Ações */
-.acoes-principais {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 28px;
-}
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all .2s;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
 
-.btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: all .2s;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    min-height: 50px;
-}
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
 
-.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-.btn:active { transform: scale(.98); }
-.btn:disabled {
-    opacity: .55;
-    cursor: not-allowed;
-    transform: none !important;
-}
+        .btn:active {
+            transform: scale(.98);
+        }
 
-.btn-pdf { background: #475569; color: white; }
-.btn-pdf:hover:not(:disabled) { background: #334155; }
+        .btn-pdf {
+            background: #475569;
+            color: white;
+        }
 
-.btn-whatsapp { background: var(--accent); color: white; }
-.btn-whatsapp:hover:not(:disabled) { background: #059669; }
+        .btn-pdf:hover {
+            background: #334155;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(71, 85, 105, .2);
+        }
 
-.btn-limpar {
-    background: transparent;
-    color: var(--text-soft);
-    border: 1.5px dashed var(--border);
-    margin-top: 10px;
-    font-weight: 600;
-    min-height: 46px;
-    grid-column: 1 / -1;
-}
-.btn-limpar:hover {
-    background: #fef2f2;
-    border-color: #fca5a5;
-    color: #dc2626;
-    border-style: solid;
-}
+        .btn-whatsapp {
+            background: var(--accent);
+            color: white;
+        }
 
-/* Mensagens */
-.mensagem {
-    display: none;
-    margin-top: 16px;
-    padding: 14px 16px;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .02em;
-    animation: fadeUp .3s ease;
-}
+        .btn-whatsapp:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, .2);
+        }
 
-.mensagem.erro {
-    background: #fef2f2;
-    border: 1px solid #fca5a5;
-    color: #b91c1c;
-}
+        .btn-limpar {
+            background: transparent;
+            color: var(--text-soft);
+            border: 1.5px dashed var(--border);
+            margin-top: 14px;
+            font-weight: 600;
+        }
 
-.mensagem.sucesso {
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #047857;
-}
+        .btn-limpar:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            color: #dc2626;
+            border-style: solid;
+        }
 
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        .botoes-acao {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
 
-/* Carregando */
-.carregando {
-    display: none;
-    text-align: center;
-    padding: 16px;
-    color: var(--text-soft);
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-}
+        .botoes-acao .btn {
+            width: 50%;
+        }
 
-.carregando::before {
-    content: "";
-    display: inline-block;
-    width: 16px; height: 16px;
-    border: 2.5px solid var(--border);
-    border-top-color: var(--primary);
-    border-radius: 50%;
-    margin-right: 10px;
-    vertical-align: middle;
-    animation: spin .7s linear infinite;
-}
+        .carregando {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-soft);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+        .carregando::before {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2.5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+            animation: spin .7s linear infinite;
+        }
 
-/* Responsivo */
-@media (max-width: 680px) {
-    body { padding: 18px 12px; }
-    .hero { margin-bottom: 22px; }
-    .hero h1 { font-size: 22px; }
-    .hero p { font-size: 11px; }
-    .card { padding: 20px; border-radius: 12px; }
-    .card-header { margin-bottom: 18px; padding-bottom: 16px; gap: 10px; }
-    .card-header .icon { width: 38px; height: 38px; border-radius: 10px; }
-    .card-header h2 { font-size: 14px; }
-    .card-header p { font-size: 10.5px; }
-    .grid { grid-template-columns: 1fr; gap: 12px; }
-    .campo.full { grid-column: auto; }
-    label { font-size: 11px; margin-bottom: 6px; }
-    input, select { padding: 11px 13px; min-height: 44px; }
-    .btn { padding: 13px; font-size: 12px; min-height: 46px; }
-    .btn svg { width: 16px; height: 16px; }
-    .acoes-principais { gap: 10px; margin-top: 20px; }
-    .mensagem { font-size: 12px; padding: 12px 14px; }
-}
-</style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                padding: 20px 14px;
+            }
+
+            .hero h1 {
+                font-size: 26px;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .campo.full {
+                grid-column: auto;
+            }
+
+            .botoes-acao {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .botoes-acao .btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
-
-    <div class="hero">
-        <div class="badge">
-            <span class="dot"></span>
-            Sistema de Cadastro
-        </div>
-        <h1>Cadastro de <span>Cliente</span></h1>
-        <p>Preencha os dados abaixo para salvar e gerar o PDF ou enviar pelo WhatsApp</p>
-    </div>
-
-    <div class="card">
-
-        <div class="card-header">
-            <div class="icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-            </div>
-            <div>
-                <h2>Informações do cliente</h2>
-                <p>Campos com <span style="color:#ef4444">*</span> são obrigatórios</p>
-            </div>
+    <div class="container">
+        <div class="hero">
+            <div class="badge"><span class="dot"></span> Sistema de Cadastro</div>
+            <h1>Cadastro de <span>Cliente</span></h1>
+            <p>Preencha os dados abaixo para registrar um novo cliente</p>
         </div>
 
-        <form id="formCadastro" autocomplete="off" onsubmit="return false;">
-
-            <div class="grid">
-
-                <div class="campo full">
-                    <label>Nome cliente <span class="req">*</span></label>
-                    <input id="nome" placeholder="Nome completo ou razão social" required>
+        <div class="card">
+            <div class="card-header">
+                <div class="icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" y1="8" x2="19" y2="14" />
+                        <line x1="22" y1="11" x2="16" y2="11" />
+                    </svg>
                 </div>
-
-                <div class="campo">
-                    <label>Tipo <span class="req">*</span></label>
-                    <select id="tipo" required>
-                        <option value="">Selecione...</option>
-                        <option value="Física">Pessoa Física</option>
-                        <option value="Jurídica">Pessoa Jurídica</option>
-                    </select>
+                <div>
+                    <h2>Informações do cliente</h2>
+                    <p>Campos com <span style="color:#ef4444">*</span> são obrigatórios</p>
                 </div>
-
-                <div class="campo">
-                    <label>Nome fantasia</label>
-                    <input id="nomeFantasia" placeholder="Opcional">
-                </div>
-
-                <div class="campo">
-                    <label>CPF/CNPJ</label>
-                    <input id="cpfCnpj" placeholder="Digite CPF ou CNPJ">
-                </div>
-
-                <div class="campo">
-                    <label>INSCRIÇÃO ESTADUAL/RG <span class="req">*</span></label>
-                    <input id="ieRg" placeholder="Inscrição estadual ou RG" required>
-                </div>
-
-                <div class="campo">
-                    <label>CEP</label>
-                    <input id="cep" maxlength="9" placeholder="00000-000">
-                </div>
-
-                <div class="campo">
-                    <label>Telefone</label>
-                    <input id="telefone" placeholder="(00) 00000-0000">
-                </div>
-
-                <div class="campo full">
-                    <label>Endereço</label>
-                    <input id="endereco" placeholder="Rua, avenida...">
-                </div>
-
-                <div class="campo">
-                    <label>Número</label>
-                    <input id="numero" placeholder="123">
-                </div>
-
-                <div class="campo">
-                    <label>Complemento</label>
-                    <input id="complemento" placeholder="Apto, sala...">
-                </div>
-
-                <div class="campo">
-                    <label>Bairro</label>
-                    <input id="bairro" placeholder="Centro">
-                </div>
-
-                <div class="campo">
-                    <label>Cidade <span class="req">*</span></label>
-                    <input id="cidade" placeholder="Ex: São Paulo" required>
-                </div>
-
-                <div class="campo">
-                    <label>UF</label>
-                    <input id="uf" maxlength="2" placeholder="SP" style="text-transform:uppercase">
-                </div>
-
-                <div class="campo">
-                    <label>E-mail</label>
-                    <input id="email" type="email" placeholder="cliente@email.com" style="text-transform:lowercase">
-                </div>
-
             </div>
 
-            <div class="acoes-principais">
+            <form id="formCadastro" onsubmit="event.preventDefault();">
+                <div class="grid">
+                    <div class="campo full">
+                        <label>Nome cliente <span class="req">*</span></label>
+                        <input id="nome" placeholder="Nome completo ou razão social" required>
+                    </div>
+                    <div class="campo">
+                        <label>Tipo <span class="req">*</span></label>
+                        <select id="tipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="Física">Pessoa Física</option>
+                            <option value="Jurídica">Pessoa Jurídica</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label>Nome fantasia</label>
+                        <input id="nomeFantasia" placeholder="Opcional">
+                    </div>
+                    <div class="campo">
+                        <label>CPF/CNPJ</label>
+                        <input id="cpfCnpj" placeholder="Digite CPF ou CNPJ">
+                    </div>
+                    <div class="campo">
+                        <label>INSCRIÇÃO ESTADUAL/RG <span class="req">*</span></label>
+                        <input id="ieRg" placeholder="Inscrição estadual ou RG" required>
+                    </div>
 
-                <button class="btn btn-pdf" type="button" id="btnPDF" onclick="gerarPDF()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    Salvar e gerar PDF
-                </button>
+                    <!-- NOVO CAMPO: Data condicional -->
+                    <div class="campo">
+                        <label id="labelData">DATA DE NASCIMENTO</label>
+                        <input id="dataNascimento" type="date">
+                    </div>
 
-                <button class="btn btn-whatsapp" type="button" id="btnWhatsApp" onclick="enviarWhatsApp()">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                    Salvar e enviar WhatsApp
-                </button>
+                    <div class="campo">
+                        <label>CEP</label>
+                        <input id="cep" maxlength="9" placeholder="00000-000">
+                    </div>
+                    <div class="campo">
+                        <label>Telefone</label>
+                        <input id="telefone" placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="campo full">
+                        <label>Endereço</label>
+                        <input id="endereco" placeholder="Rua, avenida...">
+                    </div>
+                    <div class="campo">
+                        <label>Número</label>
+                        <input id="numero" placeholder="123">
+                    </div>
+                    <div class="campo">
+                        <label>Complemento</label>
+                        <input id="complemento" placeholder="Apto, sala...">
+                    </div>
+                    <div class="campo">
+                        <label>Bairro</label>
+                        <input id="bairro" placeholder="Centro">
+                    </div>
+                    <div class="campo">
+                        <label>Cidade <span class="req">*</span></label>
+                        <input id="cidade" placeholder="Ex: São Paulo" required>
+                    </div>
+                    <div class="campo">
+                        <label>UF</label>
+                        <input id="uf" maxlength="2" placeholder="SP" style="text-transform:uppercase">
+                    </div>
+                    <div class="campo">
+                        <label>E-mail</label>
+                        <input id="email" type="email" placeholder="cliente@email.com" style="text-transform:lowercase">
+                    </div>
+                </div>
+
+                <div class="botoes-acao">
+                    <button class="btn btn-pdf" type="button" onclick="salvarEGerarPDF()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                        Gerar PDF
+                    </button>
+                    <button class="btn btn-whatsapp" type="button" onclick="salvarEEnviarWhatsApp()">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+                        </svg>
+                        WhatsApp
+                    </button>
+                </div>
 
                 <button class="btn btn-limpar" type="button" onclick="limparFormulario()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 6h18"/>
-                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M3 6h18" />
+                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
                     </svg>
                     Limpar formulário
                 </button>
-            </div>
-
-        </form>
-
-        <div class="carregando" id="carregando">Salvando cadastro...</div>
-
-        <div class="mensagem" id="mensagem"></div>
-
+            </form>
+            <div class="carregando" id="carregando">Processando...</div>
+        </div>
     </div>
 
-</div>
+    <script>
+        const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
+        const STORAGE_KEY = "rascunho_cliente_v1";
+        // const WHATSAPP_DESTINO = "5588988371213";
+        const WHATSAPP_DESTINO = "5588981762208";
 
-<script>
-const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
-const STORAGE_KEY = "rascunho_cliente_v1";
-const WHATSAPP_DESTINO = "5588981762208";
+        let idCadastroAtual = null;
+        let dadosSalvosString = "";
 
-/* Último cadastro salvo nesta sessão (para não duplicar ao clicar PDF e depois WhatsApp) */
-let ultimoCadastro = null;
-let ultimoCadastroHash = null;
+        /* MÁSCARAS */
+        function mascaraCep(v) { v = v.replace(/\D/g, "").slice(0, 8); return v.replace(/^(\d{5})(\d)/, "$1-$2"); }
+        function mascaraCnpj(v) { v = v.replace(/\D/g, "").slice(0, 14); return v.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3").replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2"); }
+        function mascaraCpf(v) { v = v.replace(/\D/g, "").slice(0, 11); return v.replace(/^(\d{3})(\d)/, "$1.$2").replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3").replace(/\.(\d{3})(\d)/, ".$1-$2"); }
+        function mascaraTelefone(v) { v = v.replace(/\D/g, "").slice(0, 11); if (v.length <= 10) return v.replace(/^(\d{2})(\d{4})(\d)/, "($1) $2-$3"); return v.replace(/^(\d{2})(\d{5})(\d)/, "($1) $2-$3"); }
 
-/* =========================================================
-   MÁSCARAS
-========================================================= */
-function mascaraCep(v) {
-    v = v.replace(/\D/g, "").slice(0, 8);
-    return v.replace(/^(\d{5})(\d)/, "$1-$2");
-}
-function mascaraCnpj(v) {
-    v = v.replace(/\D/g, "").slice(0, 14);
-    return v
-        .replace(/^(\d{2})(\d)/, "$1.$2")
-        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-        .replace(/\.(\d{3})(\d)/, ".$1/$2")
-        .replace(/(\d{4})(\d)/, "$1-$2");
-}
-function mascaraCpf(v) {
-    v = v.replace(/\D/g, "").slice(0, 11);
-    return v
-        .replace(/^(\d{3})(\d)/, "$1.$2")
-        .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
-        .replace(/\.(\d{3})(\d)/, ".$1-$2");
-}
-function mascaraTelefone(v) {
-    v = v.replace(/\D/g, "").slice(0, 11);
-    if (v.length <= 10) return v.replace(/^(\d{2})(\d{4})(\d)/, "($1) $2-$3");
-    return v.replace(/^(\d{2})(\d{5})(\d)/, "($1) $2-$3");
-}
+        /* FORMATAÇÃO DE DATA */
+        function formatarDataBR(iso) {
+            if (!iso) return "";
+            const partes = String(iso).split("-");
+            if (partes.length !== 3) return iso;
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
 
-/* =========================================================
-   CAMPOS
-========================================================= */
-const CAMPOS = [
-    "nome", "tipo", "nomeFantasia", "cidade", "uf",
-    "endereco", "numero", "complemento", "cep", "bairro",
-    "cpfCnpj", "ieRg", "telefone", "email"
-];
+        const CAMPOS = ["nome", "tipo", "nomeFantasia", "cidade", "uf", "endereco", "numero", "complemento", "cep", "bairro", "cpfCnpj", "ieRg", "dataNascimento", "telefone", "email"];
 
-/* =========================================================
-   RASCUNHO
-========================================================= */
-function salvarRascunho() {
-    const rascunho = {};
-    CAMPOS.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) rascunho[id] = el.value;
-    });
-    const temAlgo = Object.values(rascunho).some(v => v && v.trim());
-    if (temAlgo) localStorage.setItem(STORAGE_KEY, JSON.stringify(rascunho));
-    else localStorage.removeItem(STORAGE_KEY);
-}
+        /* RASCUNHO */
+        function salvarRascunho() {
+            const rascunho = {};
+            CAMPOS.forEach(id => { const el = document.getElementById(id); if (el) rascunho[id] = el.value; });
+            const temAlgo = Object.values(rascunho).some(v => v && String(v).trim());
+            if (temAlgo) localStorage.setItem(STORAGE_KEY, JSON.stringify(rascunho)); else localStorage.removeItem(STORAGE_KEY);
+        }
+        function restaurarRascunho() {
+            const bruto = localStorage.getItem(STORAGE_KEY);
+            if (!bruto) return false;
+            try {
+                const rascunho = JSON.parse(bruto);
+                let restaurou = false;
+                CAMPOS.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && rascunho[id] != null && rascunho[id] !== "") { el.value = rascunho[id]; restaurou = true; }
+                });
+                if (rascunho.tipo) atualizarLabelData(rascunho.tipo);
+                return restaurou;
+            } catch (e) { return false; }
+        }
+        function limparRascunho() { localStorage.removeItem(STORAGE_KEY); }
 
-function restaurarRascunho() {
-    const bruto = localStorage.getItem(STORAGE_KEY);
-    if (!bruto) return false;
-    try {
-        const rascunho = JSON.parse(bruto);
-        let restaurou = false;
+        /* LABEL CONDICIONAL DA DATA */
+        function atualizarLabelData(tipo) {
+            const label = document.getElementById("labelData");
+            const input = document.getElementById("dataNascimento");
+            const hoje = new Date().toISOString().split("T")[0];
+            input.max = hoje;
+            if (tipo === "Jurídica") {
+                label.textContent = "DATA DE ABERTURA / SITUAÇÃO CADASTRAL";
+            } else {
+                label.textContent = "DATA DE NASCIMENTO";
+            }
+        }
+
+        document.getElementById("tipo").addEventListener("change", (e) => {
+            atualizarLabelData(e.target.value);
+        });
+
+        /* EVENTOS DOS CAMPOS */
         CAMPOS.forEach(id => {
             const el = document.getElementById(id);
-            if (el && rascunho[id] != null && rascunho[id] !== "") {
-                el.value = rascunho[id];
-                restaurou = true;
+            if (!el) return;
+            el.addEventListener("input", () => { salvarRascunho(); idCadastroAtual = null; });
+            el.addEventListener("change", () => { salvarRascunho(); idCadastroAtual = null; });
+        });
+
+        /* MÁSCARAS NOS INPUTS */
+        document.getElementById("cep").addEventListener("input", e => e.target.value = mascaraCep(e.target.value));
+        document.getElementById("telefone").addEventListener("input", e => e.target.value = mascaraTelefone(e.target.value));
+        document.getElementById("cpfCnpj").addEventListener("input", e => {
+            const tipo = document.getElementById("tipo").value;
+            if (tipo === "Jurídica") e.target.value = mascaraCnpj(e.target.value);
+            else if (tipo === "Física") e.target.value = mascaraCpf(e.target.value);
+        });
+
+        /* BUSCA CEP */
+        async function buscarCep(cep) {
+            const limpo = cep.replace(/\D/g, "");
+            if (limpo.length !== 8) return;
+            try {
+                const resp = await fetch(`https://viacep.com.br/ws/${limpo}/json/`);
+                const dados = await resp.json();
+                if (dados.erro) return;
+                document.getElementById("endereco").value = (dados.logradouro || "").toUpperCase();
+                document.getElementById("bairro").value = (dados.bairro || "").toUpperCase();
+                document.getElementById("cidade").value = (dados.localidade || "").toUpperCase();
+                document.getElementById("uf").value = (dados.uf || "").toUpperCase();
+                salvarRascunho();
+                document.getElementById("numero").focus();
+                idCadastroAtual = null;
+            } catch (e) { }
+        }
+        document.getElementById("cep").addEventListener("blur", (e) => buscarCep(e.target.value));
+        document.getElementById("cep").addEventListener("input", e => { if (e.target.value.replace(/\D/g, "").length === 8) buscarCep(e.target.value); });
+
+        /* BUSCA CNPJ */
+        async function buscarCnpj(cnpj) {
+            const limpo = cnpj.replace(/\D/g, "");
+            if (limpo.length !== 14) return;
+            if (document.getElementById("tipo").value !== "Jurídica") return;
+            try {
+                const resp = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${limpo}`);
+                if (!resp.ok) return;
+                const dados = await resp.json();
+                const setSeVazio = (id, valor) => { const el = document.getElementById(id); if (el && !el.value.trim() && valor) el.value = String(valor).toUpperCase(); };
+                setSeVazio("nome", dados.razao_social || "");
+                setSeVazio("nomeFantasia", dados.nome_fantasia || "");
+                setSeVazio("endereco", dados.logradouro || "");
+                setSeVazio("numero", dados.numero || "");
+                setSeVazio("complemento", dados.complemento || "");
+                setSeVazio("bairro", dados.bairro || "");
+                setSeVazio("cidade", dados.municipio || "");
+                setSeVazio("uf", dados.uf || "");
+                setSeVazio("cep", mascaraCep(dados.cep || ""));
+                setSeVazio("email", (dados.email || "").toLowerCase());
+                setSeVazio("telefone", mascaraTelefone(dados.ddd_telefone_1 || ""));
+
+                // Preenche a DATA DE ABERTURA (formato yyyy-mm-dd) se estiver vazia
+                if (dados.data_inicio_atividade) {
+                    const elData = document.getElementById("dataNascimento");
+                    if (elData && !elData.value) {
+                        elData.value = String(dados.data_inicio_atividade).substring(0, 10);
+                    }
+                }
+
+                salvarRascunho();
+                idCadastroAtual = null;
+            } catch (e) { }
+        }
+        document.getElementById("cpfCnpj").addEventListener("blur", (e) => buscarCnpj(e.target.value));
+        document.getElementById("cpfCnpj").addEventListener("input", e => { if (e.target.value.replace(/\D/g, "").length === 14 && document.getElementById("tipo").value === "Jurídica") buscarCnpj(e.target.value); });
+
+        /* PEGAR DADOS */
+        function pegarDados() {
+            return {
+                nome: document.getElementById("nome").value.trim().toUpperCase(),
+                tipo: document.getElementById("tipo").value.toUpperCase(),
+                nomeFantasia: document.getElementById("nomeFantasia").value.trim().toUpperCase(),
+                cidade: document.getElementById("cidade").value.trim().toUpperCase(),
+                uf: document.getElementById("uf").value.trim().toUpperCase(),
+                endereco: document.getElementById("endereco").value.trim().toUpperCase(),
+                numero: document.getElementById("numero").value.trim().toUpperCase(),
+                complemento: document.getElementById("complemento").value.trim().toUpperCase(),
+                cep: document.getElementById("cep").value.trim(),
+                bairro: document.getElementById("bairro").value.trim().toUpperCase(),
+                cpfCnpj: document.getElementById("cpfCnpj").value.trim(),
+                ieRg: document.getElementById("ieRg").value.trim().toUpperCase(),
+                dataNascimento: document.getElementById("dataNascimento").value.trim(),
+                telefone: document.getElementById("telefone").value.trim(),
+                email: document.getElementById("email").value.trim().toLowerCase()
+            };
+        }
+
+        /* VERIFICA SE O ID AINDA EXISTE NO BANCO */
+        async function checarSeExisteNoBanco(id) {
+            if (!id) return false;
+            try {
+                const resp = await fetch(`${URL_API}?acao=verificar&id=${id}`);
+                const json = await resp.json();
+                return json.existe === true;
+            } catch (e) {
+                return false;
             }
-        });
-        return restaurou;
-    } catch (e) {
-        console.warn("Rascunho inválido:", e);
-        return false;
-    }
-}
-
-function limparRascunho() { localStorage.removeItem(STORAGE_KEY); }
-
-CAMPOS.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener("input", salvarRascunho);
-    el.addEventListener("change", salvarRascunho);
-});
-
-/* =========================================================
-   MÁSCARAS NOS INPUTS
-========================================================= */
-const inputCep = document.getElementById("cep");
-const inputCnpj = document.getElementById("cpfCnpj");
-const inputTelefone = document.getElementById("telefone");
-
-inputCep.addEventListener("input", e => e.target.value = mascaraCep(e.target.value));
-inputTelefone.addEventListener("input", e => e.target.value = mascaraTelefone(e.target.value));
-
-inputCnpj.addEventListener("input", e => {
-    const tipo = document.getElementById("tipo").value;
-    const v = e.target.value;
-    if (tipo === "Jurídica") e.target.value = mascaraCnpj(v);
-    else if (tipo === "Física") e.target.value = mascaraCpf(v);
-});
-
-/* =========================================================
-   BUSCA CEP
-========================================================= */
-async function buscarCep(cep) {
-    const limpo = cep.replace(/\D/g, "");
-    if (limpo.length !== 8) return;
-    try {
-        const resp = await fetch(`https://viacep.com.br/ws/${limpo}/json/`);
-        const dados = await resp.json();
-        if (dados.erro) return;
-        document.getElementById("endereco").value = (dados.logradouro || "").toUpperCase();
-        document.getElementById("bairro").value = (dados.bairro || "").toUpperCase();
-        document.getElementById("cidade").value = (dados.localidade || "").toUpperCase();
-        document.getElementById("uf").value = (dados.uf || "").toUpperCase();
-        salvarRascunho();
-        document.getElementById("numero").focus();
-    } catch (e) {
-        console.warn("Erro ao buscar CEP:", e);
-    }
-}
-
-inputCep.addEventListener("blur", () => buscarCep(inputCep.value));
-inputCep.addEventListener("input", e => {
-    const limpo = e.target.value.replace(/\D/g, "");
-    if (limpo.length === 8) buscarCep(e.target.value);
-});
-
-/* =========================================================
-   BUSCA CNPJ
-========================================================= */
-async function buscarCnpj(cnpj) {
-    const limpo = cnpj.replace(/\D/g, "");
-    if (limpo.length !== 14) return;
-    if (document.getElementById("tipo").value !== "Jurídica") return;
-
-    try {
-        const resp = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${limpo}`);
-        if (!resp.ok) return;
-        const dados = await resp.json();
-
-        const setSeVazio = (id, valor) => {
-            const el = document.getElementById(id);
-            if (el && !el.value.trim() && valor) el.value = String(valor).toUpperCase();
-        };
-
-        setSeVazio("nome", dados.razao_social || "");
-        setSeVazio("nomeFantasia", dados.nome_fantasia || "");
-        setSeVazio("endereco", dados.logradouro || "");
-        setSeVazio("numero", dados.numero || "");
-        setSeVazio("complemento", dados.complemento || "");
-        setSeVazio("bairro", dados.bairro || "");
-        setSeVazio("cidade", dados.municipio || "");
-        setSeVazio("uf", dados.uf || "");
-        setSeVazio("cep", mascaraCep(dados.cep || ""));
-        setSeVazio("email", (dados.email || "").toLowerCase());
-        setSeVazio("telefone", mascaraTelefone(dados.ddd_telefone_1 || ""));
-
-        salvarRascunho();
-    } catch (e) {
-        console.warn("Erro ao buscar CNPJ:", e);
-    }
-}
-
-inputCnpj.addEventListener("blur", () => buscarCnpj(inputCnpj.value));
-inputCnpj.addEventListener("input", e => {
-    const tipo = document.getElementById("tipo").value;
-    const limpo = e.target.value.replace(/\D/g, "");
-    if (tipo === "Jurídica" && limpo.length === 14) buscarCnpj(e.target.value);
-});
-
-/* =========================================================
-   PEGAR DADOS
-========================================================= */
-function pegarDados() {
-    return {
-        nome: document.getElementById("nome").value.trim().toUpperCase(),
-        tipo: document.getElementById("tipo").value.toUpperCase(),
-        nomeFantasia: document.getElementById("nomeFantasia").value.trim().toUpperCase(),
-        cidade: document.getElementById("cidade").value.trim().toUpperCase(),
-        uf: document.getElementById("uf").value.trim().toUpperCase(),
-        endereco: document.getElementById("endereco").value.trim().toUpperCase(),
-        numero: document.getElementById("numero").value.trim().toUpperCase(),
-        complemento: document.getElementById("complemento").value.trim().toUpperCase(),
-        cep: document.getElementById("cep").value.trim(),
-        bairro: document.getElementById("bairro").value.trim().toUpperCase(),
-        cpfCnpj: document.getElementById("cpfCnpj").value.trim(),
-        ieRg: document.getElementById("ieRg").value.trim().toUpperCase(),
-        telefone: document.getElementById("telefone").value.trim(),
-        email: document.getElementById("email").value.trim().toLowerCase()
-    };
-}
-
-/* =========================================================
-   HASH DOS DADOS (para saber se mudou algo)
-========================================================= */
-function hashDados(dados) {
-    return JSON.stringify(dados);
-}
-
-/* =========================================================
-   MENSAGENS
-========================================================= */
-function mostrarMensagem(texto, tipo) {
-    const box = document.getElementById("mensagem");
-    box.textContent = texto;
-    box.className = "mensagem " + tipo;
-    box.style.display = "block";
-}
-function esconderMensagem() {
-    const box = document.getElementById("mensagem");
-    box.style.display = "none";
-    box.textContent = "";
-}
-
-/* =========================================================
-   VALIDAÇÃO MÍNIMA
-========================================================= */
-function validarDados(dados) {
-    if (!dados.nome) return "Informe o nome do cliente antes de continuar.";
-    if (!dados.tipo) return "Selecione o tipo (Física/Jurídica).";
-    if (!dados.cidade) return "Informe a cidade.";
-    return null;
-}
-
-/* =========================================================
-   SALVAR NO BACKEND (se necessário)
-   - Retorna { ok: true, dados } ou { ok: false, erro }
-========================================================= */
-async function salvarSeNecessario(dados) {
-    const hashAtual = hashDados(dados);
-
-    // Se já salvou exatamente estes dados nesta sessão, não salva de novo
-    if (ultimoCadastro && ultimoCadastroHash === hashAtual) {
-        return { ok: true, dados: ultimoCadastro, jaSalvo: true };
-    }
-
-    try {
-        const resposta = await fetch(URL_API, {
-            method: "POST",
-            body: JSON.stringify({ acao: "cadastrar", dados: dados })
-        });
-        const resultado = await resposta.json();
-
-        if (!resultado.sucesso) {
-            return { ok: false, erro: resultado.erro || "Erro desconhecido ao salvar." };
         }
 
-        ultimoCadastro = { ...dados, id: resultado.id };
-        ultimoCadastroHash = hashAtual;
+        /* VALIDA E SALVA */
+        async function validarESalvar(dados) {
+            if (!dados.nome || !dados.tipo || !dados.ieRg || !dados.cidade) {
+                alert("Por favor, preencha todos os campos obrigatórios (*) antes de continuar.");
+                return false;
+            }
 
-        return { ok: true, dados: ultimoCadastro, jaSalvo: false };
-    } catch (e) {
-        return { ok: false, erro: "Falha de conexão: " + e.message };
-    }
-}
+            const dadosString = JSON.stringify(dados);
+            document.getElementById("carregando").style.display = "block";
 
-/* =========================================================
-   AÇÃO BASE: valida → salva → executa callback
-========================================================= */
-async function executarComSalvamento(btn, textoCarregando, acaoFinal) {
-    esconderMensagem();
+            try {
+                if (idCadastroAtual && dadosSalvosString === dadosString) {
+                    const aindaExiste = await checarSeExisteNoBanco(idCadastroAtual);
+                    if (aindaExiste) {
+                        document.getElementById("carregando").style.display = "none";
+                        return true;
+                    }
+                }
 
-    const dados = pegarDados();
+                const resposta = await fetch(URL_API, {
+                    method: "POST",
+                    body: JSON.stringify({ acao: "cadastrar", dados: dados })
+                });
+                const resultado = await resposta.json();
 
-    const erroValidacao = validarDados(dados);
-    if (erroValidacao) {
-        mostrarMensagem(erroValidacao, "erro");
-        return;
-    }
+                if (!resultado.sucesso) throw new Error(resultado.erro);
 
-    const carregando = document.getElementById("carregando");
-    const textoOriginal = carregando.textContent;
+                idCadastroAtual = resultado.id;
+                dadosSalvosString = dadosString;
 
-    btn.disabled = true;
-    carregando.textContent = textoCarregando;
-    carregando.style.display = "block";
-
-    try {
-        const resultado = await salvarSeNecessario(dados);
-
-        if (!resultado.ok) {
-            mostrarMensagem("Não foi possível salvar: " + resultado.erro, "erro");
-            return;
+                limparRascunho();
+                return true;
+            } catch (erro) {
+                alert("Erro ao salvar cadastro:\n\n" + erro.message);
+                return false;
+            } finally {
+                document.getElementById("carregando").style.display = "none";
+            }
         }
 
-        // Executa a ação final (PDF ou WhatsApp) com os dados salvos
-        acaoFinal(resultado.dados);
+        /* BOTÃO GERAR PDF */
+        async function salvarEGerarPDF() {
+            const c = pegarDados();
+            const salvou = await validarESalvar(c);
+            if (!salvou) return;
 
-    } catch (e) {
-        mostrarMensagem("Erro inesperado: " + e.message, "erro");
-    } finally {
-        btn.disabled = false;
-        carregando.textContent = textoOriginal;
-        carregando.style.display = "none";
-    }
-}
+            const { jsPDF } = window.jspdf;
+            if (!jsPDF) { alert("Biblioteca jsPDF não carregada."); return; }
 
-/* =========================================================
-   GERAR PDF (salva antes)
-========================================================= */
-function gerarPDF() {
-    const btn = document.getElementById("btnPDF");
-    executarComSalvamento(btn, "Salvando cadastro...", function(c) {
-        try {
-            gerarPDFInterno(c);
-            mostrarMensagem("Cliente salvo e PDF gerado com sucesso!", "sucesso");
-        } catch (e) {
-            mostrarMensagem("Salvo no sistema, mas erro ao gerar PDF: " + e.message, "erro");
+            const doc = new jsPDF({ unit: "mm", format: "a4" });
+            const PAGE_W = 210, MARGIN = 20;
+            let y = 25;
+
+            doc.setFillColor(15, 23, 42); doc.rect(0, 0, PAGE_W, 32, "F");
+            doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(18);
+            doc.text("CADASTRO DE CLIENTE", PAGE_W / 2, 18, { align: "center" });
+            doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(180, 190, 210);
+            doc.text("DOCUMENTO GERADO AUTOMATICAMENTE", PAGE_W / 2, 25, { align: "center" });
+
+            y = 45;
+            doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+            doc.text("DADOS DO CLIENTE", MARGIN, y); y += 2;
+            doc.setDrawColor(16, 185, 129); doc.setLineWidth(0.8); doc.line(MARGIN, y, MARGIN + 40, y); y += 8;
+
+            function campo(label, valor, destaque = false) {
+                doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(100, 116, 139);
+                doc.text(label, MARGIN, y);
+                doc.setFont("helvetica", destaque ? "bold" : "normal"); doc.setFontSize(destaque ? 12 : 10); doc.setTextColor(15, 23, 42);
+                const texto = String(valor || "—").toUpperCase(); const maxWidth = PAGE_W - MARGIN * 2;
+                const linhas = doc.splitTextToSize(texto, maxWidth);
+                linhas.forEach((linha, i) => { doc.text(linha, MARGIN, y + 5 + (i * 5)); });
+                y += 12 + (linhas.length - 1) * 5;
+            }
+
+            campo("NOME / RAZÃO SOCIAL", c.nome, true);
+            doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(100, 116, 139);
+            doc.text("TIPO", MARGIN, y); doc.text("CPF / CNPJ", MARGIN + 80, y);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(15, 23, 42);
+            doc.text(String(c.tipo || "—").toUpperCase(), MARGIN, y + 5);
+            doc.text(String(c.cpfCnpj || "—").toUpperCase(), MARGIN + 80, y + 5);
+            y += 12;
+
+            if (c.nomeFantasia) campo("NOME FANTASIA", c.nomeFantasia);
+            if (c.ieRg) campo("INSCRIÇÃO ESTADUAL/RG", c.ieRg);
+            if (c.dataNascimento) {
+                const labelData = c.tipo === "JURÍDICA" ? "DATA DE ABERTURA / SITUAÇÃO CADASTRAL" : "DATA DE NASCIMENTO";
+                campo(labelData, formatarDataBR(c.dataNascimento));
+            }
+            y += 3;
+
+            doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+            doc.text("ENDEREÇO", MARGIN, y); y += 2;
+            doc.setDrawColor(16, 185, 129); doc.setLineWidth(0.8); doc.line(MARGIN, y, MARGIN + 40, y); y += 8;
+
+            doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(100, 116, 139);
+            doc.text("CEP", MARGIN, y); doc.text("BAIRRO", MARGIN + 60, y);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(15, 23, 42);
+            doc.text(String(c.cep || "—").toUpperCase(), MARGIN, y + 5);
+            doc.text(String(c.bairro || "—").toUpperCase(), MARGIN + 60, y + 5);
+            y += 12;
+
+            if (c.endereco) campo("ENDEREÇO", c.endereco + (c.numero ? `, ${c.numero}` : ""));
+            if (c.complemento) campo("COMPLEMENTO", c.complemento);
+
+            doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(100, 116, 139);
+            doc.text("CIDADE", MARGIN, y); doc.text("UF", MARGIN + 120, y);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(15, 23, 42);
+            doc.text(String(c.cidade || "—").toUpperCase(), MARGIN, y + 5);
+            doc.text(String(c.uf || "—").toUpperCase(), MARGIN + 120, y + 5);
+            y += 15;
+
+            doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+            doc.text("CONTATO", MARGIN, y); y += 2;
+            doc.setDrawColor(16, 185, 129); doc.setLineWidth(0.8); doc.line(MARGIN, y, MARGIN + 40, y); y += 8;
+
+            if (c.telefone) campo("TELEFONE", c.telefone);
+            if (c.email) campo("E-MAIL", c.email.toLowerCase());
+
+            const footerY = 280;
+            doc.setDrawColor(226, 232, 240); doc.setLineWidth(0.3); doc.line(MARGIN, footerY - 4, PAGE_W - MARGIN, footerY - 4);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(148, 163, 184);
+            doc.text("GERADO EM: " + new Date().toLocaleString("pt-BR"), MARGIN, footerY);
+            doc.text("PÁGINA 1 DE 1", PAGE_W - MARGIN, footerY, { align: "right" });
+
+            doc.save("Cadastro_" + (c.nome || "cliente").replace(/[^\w\s-]/gi, "").replace(/\s+/g, "_").substring(0, 40) + ".pdf");
         }
-    });
-}
 
-function gerarPDFInterno(c) {
-    const { jsPDF } = window.jspdf;
-    if (!jsPDF) throw new Error("Biblioteca jsPDF não carregada.");
+        /* BOTÃO WHATSAPP */
+        async function salvarEEnviarWhatsApp() {
+            const c = pegarDados();
+            const salvou = await validarESalvar(c);
+            if (!salvou) return;
 
-    const doc = new jsPDF({ unit: "mm", format: "a4" });
-    const PAGE_W = 210;
-    const MARGIN = 20;
-    let y = 25;
+            const labelData = c.tipo === "JURÍDICA" ? "DATA DE ABERTURA" : "DATA DE NASCIMENTO";
 
-    doc.setFillColor(15, 23, 42);
-    doc.rect(0, 0, PAGE_W, 32, "F");
-
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("CADASTRO DE CLIENTE", PAGE_W / 2, 18, { align: "center" });
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(180, 190, 210);
-    doc.text("DOCUMENTO GERADO AUTOMATICAMENTE", PAGE_W / 2, 25, { align: "center" });
-
-    y = 45;
-
-    doc.setTextColor(15, 23, 42);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text("DADOS DO CLIENTE", MARGIN, y);
-    y += 2;
-
-    doc.setDrawColor(16, 185, 129);
-    doc.setLineWidth(0.8);
-    doc.line(MARGIN, y, MARGIN + 40, y);
-    y += 8;
-
-    function campo(label, valor, destaque = false) {
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(8);
-        doc.setTextColor(100, 116, 139);
-        doc.text(label, MARGIN, y);
-
-        doc.setFont("helvetica", destaque ? "bold" : "normal");
-        doc.setFontSize(destaque ? 12 : 10);
-        doc.setTextColor(15, 23, 42);
-
-        const texto = String(valor || "—").toUpperCase();
-        const maxWidth = PAGE_W - MARGIN * 2;
-        const linhas = doc.splitTextToSize(texto, maxWidth);
-        linhas.forEach((linha, i) => doc.text(linha, MARGIN, y + 5 + (i * 5)));
-        y += 12 + (linhas.length - 1) * 5;
-    }
-
-    campo("NOME / RAZÃO SOCIAL", c.nome, true);
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(100, 116, 139);
-    doc.text("TIPO", MARGIN, y);
-    doc.text("CPF / CNPJ", MARGIN + 80, y);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(15, 23, 42);
-    doc.text(String(c.tipo || "—").toUpperCase(), MARGIN, y + 5);
-    doc.text(String(c.cpfCnpj || "—").toUpperCase(), MARGIN + 80, y + 5);
-    y += 12;
-
-    if (c.nomeFantasia) campo("NOME FANTASIA", c.nomeFantasia);
-    if (c.ieRg) campo("INSCRIÇÃO ESTADUAL / RG", c.ieRg);
-
-    y += 3;
-
-    doc.setTextColor(15, 23, 42);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text("ENDEREÇO", MARGIN, y);
-    y += 2;
-
-    doc.setDrawColor(16, 185, 129);
-    doc.setLineWidth(0.8);
-    doc.line(MARGIN, y, MARGIN + 40, y);
-    y += 8;
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(100, 116, 139);
-    doc.text("CEP", MARGIN, y);
-    doc.text("BAIRRO", MARGIN + 60, y);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(15, 23, 42);
-    doc.text(String(c.cep || "—").toUpperCase(), MARGIN, y + 5);
-    doc.text(String(c.bairro || "—").toUpperCase(), MARGIN + 60, y + 5);
-    y += 12;
-
-    if (c.endereco) {
-        const num = c.numero ? `, ${c.numero}` : "";
-        campo("ENDEREÇO", c.endereco + num);
-    }
-    if (c.complemento) campo("COMPLEMENTO", c.complemento);
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.setTextColor(100, 116, 139);
-    doc.text("CIDADE", MARGIN, y);
-    doc.text("UF", MARGIN + 120, y);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(15, 23, 42);
-    doc.text(String(c.cidade || "—").toUpperCase(), MARGIN, y + 5);
-    doc.text(String(c.uf || "—").toUpperCase(), MARGIN + 120, y + 5);
-    y += 15;
-
-    doc.setTextColor(15, 23, 42);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text("CONTATO", MARGIN, y);
-    y += 2;
-
-    doc.setDrawColor(16, 185, 129);
-    doc.setLineWidth(0.8);
-    doc.line(MARGIN, y, MARGIN + 40, y);
-    y += 8;
-
-    if (c.telefone) campo("TELEFONE", c.telefone);
-    if (c.email) campo("E-MAIL", c.email.toLowerCase());
-
-    const footerY = 280;
-    doc.setDrawColor(226, 232, 240);
-    doc.setLineWidth(0.3);
-    doc.line(MARGIN, footerY - 4, PAGE_W - MARGIN, footerY - 4);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7);
-    doc.setTextColor(148, 163, 184);
-
-    const dataAtual = new Date().toLocaleString("pt-BR");
-    doc.text("GERADO EM: " + dataAtual, MARGIN, footerY);
-    doc.text("PÁGINA 1 DE 1", PAGE_W - MARGIN, footerY, { align: "right" });
-
-    const nomeArquivo = "Cadastro_" + (c.nome || "cliente")
-        .replace(/[^\w\s-]/gi, "")
-        .replace(/\s+/g, "_")
-        .substring(0, 40) + ".pdf";
-
-    doc.save(nomeArquivo);
-}
-
-/* =========================================================
-   WHATSAPP (salva antes)
-========================================================= */
-function enviarWhatsApp() {
-    const btn = document.getElementById("btnWhatsApp");
-    executarComSalvamento(btn, "Salvando cadastro...", function(c) {
-        const mensagem = `CADASTRO DO CLIENTE
+            const mensagem = `CADASTRO DO CLIENTE
 
 NOME: ${c.nome}
 TIPO: ${c.tipo}
@@ -955,70 +802,36 @@ CEP: ${c.cep}
 BAIRRO: ${c.bairro}
 CPF/CNPJ: ${c.cpfCnpj}
 INSCRIÇÃO ESTADUAL/RG: ${c.ieRg || "—"}
+${labelData}: ${c.dataNascimento ? formatarDataBR(c.dataNascimento) : "—"}
 TELEFONE: ${c.telefone}
 E-MAIL: ${c.email}`;
 
-        const url = "https://wa.me/" + WHATSAPP_DESTINO + "?text=" + encodeURIComponent(mensagem);
-        window.open(url, "_blank");
-        mostrarMensagem("Cliente salvo e WhatsApp aberto com a mensagem.", "sucesso");
-    });
-}
+            window.open("https://wa.me/" + WHATSAPP_DESTINO + "?text=" + encodeURIComponent(mensagem), "_blank");
+        }
 
-/* =========================================================
-   LIMPAR FORMULÁRIO
-========================================================= */
-function limparFormulario() {
-    const temAlgo = CAMPOS.some(id => {
-        const el = document.getElementById(id);
-        return el && el.value.trim();
-    });
+        /* LIMPAR */
+        function limparFormulario() {
+            const temAlgo = CAMPOS.some(id => { const el = document.getElementById(id); return el && String(el.value).trim(); });
+            if (temAlgo && !confirm("Tem certeza que deseja limpar todos os campos?\n\nO rascunho também será apagado.")) return;
+            document.getElementById("formCadastro").reset();
+            limparRascunho();
+            idCadastroAtual = null;
+            atualizarLabelData("");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
 
-    if (temAlgo && !confirm("Tem certeza que deseja limpar todos os campos do formulário?\n\nO rascunho salvo também será apagado.")) {
-        return;
-    }
-
-    document.getElementById("formCadastro").reset();
-    ultimoCadastro = null;
-    ultimoCadastroHash = null;
-    esconderMensagem();
-    limparRascunho();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-/* =========================================================
-   INICIAR
-========================================================= */
-(function iniciar() {
-    const restaurou = restaurarRascunho();
-    if (restaurou) {
-        const aviso = document.createElement("div");
-        aviso.textContent = "📝 RASCUNHO RECUPERADO AUTOMATICAMENTE";
-        aviso.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #0f172a;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 10px;
-            font-family: Inter, sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: .06em;
-            box-shadow: 0 8px 24px rgba(15,23,42,.3);
-            z-index: 9999;
-            animation: fadeUp .3s ease;
-            text-transform: uppercase;
-        `;
-        document.body.appendChild(aviso);
-        setTimeout(() => {
-            aviso.style.transition = "opacity .4s";
-            aviso.style.opacity = "0";
-            setTimeout(() => aviso.remove(), 400);
-        }, 3000);
-    }
-})();
-</script>
-
+        /* INICIAR */
+        (function iniciar() {
+            atualizarLabelData("");
+            if (restaurarRascunho()) {
+                const aviso = document.createElement("div");
+                aviso.textContent = "📝 RASCUNHO RECUPERADO AUTOMATICAMENTE";
+                aviso.style.cssText = `position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 12px 18px; border-radius: 10px; font-family: Inter, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; box-shadow: 0 8px 24px rgba(15,23,42,.3); z-index: 9999; text-transform: uppercase;`;
+                document.body.appendChild(aviso);
+                setTimeout(() => { aviso.style.transition = "opacity .4s"; aviso.style.opacity = "0"; setTimeout(() => aviso.remove(), 400); }, 3000);
+            }
+        })();
+    </script>
 </body>
+
 </html>
