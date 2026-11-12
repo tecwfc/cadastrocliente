@@ -335,7 +335,7 @@
 
     <script>
         const URL_API = "https://script.google.com/macros/s/AKfycbxTvEztA7S67jYCbdD8RtIra06zVpeEL3hfWyi_-UOTLwf-5s61Ha6QxQv0XIFmwywwGA/exec";
-        const STORAGE_KEY = "rascunho_cliente_v1";
+        
         const WHATSAPP_DESTINO = "5588981762208";
 
         let idCadastroAtual = null;
@@ -357,29 +357,6 @@
 
         const CAMPOS = ["nome", "tipo", "nomeFantasia", "cidade", "uf", "endereco", "numero", "complemento", "cep", "bairro", "cpfCnpj", "ieRg", "dataNascimento", "telefone", "email"];
 
-        /* RASCUNHO */
-        function salvarRascunho() {
-            const rascunho = {};
-            CAMPOS.forEach(id => { const el = document.getElementById(id); if (el) rascunho[id] = el.value; });
-            const temAlgo = Object.values(rascunho).some(v => v && String(v).trim());
-            if (temAlgo) localStorage.setItem(STORAGE_KEY, JSON.stringify(rascunho)); else localStorage.removeItem(STORAGE_KEY);
-        }
-        function restaurarRascunho() {
-            const bruto = localStorage.getItem(STORAGE_KEY);
-            if (!bruto) return false;
-            try {
-                const rascunho = JSON.parse(bruto);
-                let restaurou = false;
-                CAMPOS.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el && rascunho[id] != null && rascunho[id] !== "") { el.value = rascunho[id]; restaurou = true; }
-                });
-                if (rascunho.tipo) atualizarLabelData(rascunho.tipo);
-                return restaurou;
-            } catch (e) { return false; }
-        }
-        function limparRascunho() { localStorage.removeItem(STORAGE_KEY); }
-
         /* LABEL CONDICIONAL DA DATA */
         function atualizarLabelData(tipo) {
             const label = document.getElementById("labelData");
@@ -397,12 +374,12 @@
             atualizarLabelData(e.target.value);
         });
 
-        /* EVENTOS DOS CAMPOS */
+        /* EVENTOS DOS CAMPOS — apenas invalidam o cache de "já salvo" */
         CAMPOS.forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
-            el.addEventListener("input", () => { salvarRascunho(); idCadastroAtual = null; });
-            el.addEventListener("change", () => { salvarRascunho(); idCadastroAtual = null; });
+            el.addEventListener("input", () => { idCadastroAtual = null; });
+            el.addEventListener("change", () => { idCadastroAtual = null; });
         });
 
         /* MÁSCARAS NOS INPUTS */
@@ -426,7 +403,6 @@
                 document.getElementById("bairro").value = (dados.bairro || "").toUpperCase();
                 document.getElementById("cidade").value = (dados.localidade || "").toUpperCase();
                 document.getElementById("uf").value = (dados.uf || "").toUpperCase();
-                salvarRascunho();
                 document.getElementById("numero").focus();
                 idCadastroAtual = null;
             } catch (e) { }
@@ -434,9 +410,7 @@
         document.getElementById("cep").addEventListener("blur", (e) => buscarCep(e.target.value));
         document.getElementById("cep").addEventListener("input", e => { if (e.target.value.replace(/\D/g, "").length === 8) buscarCep(e.target.value); });
 
-        /* =========================================================
-           BUSCA CNPJ — PREENCHE AUTOMATICAMENTE (SOBRESCREVENDO)
-        ========================================================= */
+        /* BUSCA CNPJ — PREENCHE AUTOMATICAMENTE (SOBRESCREVENDO) */
         async function buscarCnpj(cnpj) {
             const limpo = cnpj.replace(/\D/g, "");
             if (limpo.length !== 14) return;
@@ -468,19 +442,16 @@
                 set("uf", dados.uf || "");
                 set("cep", mascaraCep(dados.cep || ""));
 
-                // E-mail e telefone: mantém minúsculo no e-mail
                 const elEmail = document.getElementById("email");
                 if (elEmail) elEmail.value = (dados.email || "").toLowerCase();
 
                 set("telefone", mascaraTelefone(dados.ddd_telefone_1 || ""));
 
-                // Data de abertura (vem em yyyy-mm-dd)
                 if (dados.data_inicio_atividade) {
                     const elData = document.getElementById("dataNascimento");
                     if (elData) elData.value = String(dados.data_inicio_atividade).substring(0, 10);
                 }
 
-                salvarRascunho();
                 idCadastroAtual = null;
 
             } catch (e) {
@@ -561,7 +532,6 @@
                 idCadastroAtual = resultado.id;
                 dadosSalvosString = dadosString;
 
-                limparRascunho();
                 return true;
             } catch (erro) {
                 alert("Erro ao salvar cadastro:\n\n" + erro.message);
@@ -688,24 +658,19 @@ E-MAIL: ${c.email}`;
         /* LIMPAR */
         function limparFormulario() {
             const temAlgo = CAMPOS.some(id => { const el = document.getElementById(id); return el && String(el.value).trim(); });
-            if (temAlgo && !confirm("Tem certeza que deseja limpar todos os campos?\n\nO rascunho também será apagado.")) return;
+            if (temAlgo && !confirm("Tem certeza que deseja limpar todos os campos?")) return;
             document.getElementById("formCadastro").reset();
-            limparRascunho();
             idCadastroAtual = null;
             atualizarLabelData("");
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-        /* INICIAR */
+        /* INICIAR — sempre começa com o formulário limpo */
         (function iniciar() {
+            // Remove qualquer rascunho antigo que possa ter ficado salvo de versões anteriores
+            try { localStorage.removeItem("rascunho_cliente_v1"); } catch (e) { }
+
             atualizarLabelData("");
-            if (restaurarRascunho()) {
-                const aviso = document.createElement("div");
-                aviso.textContent = "📝 RASCUNHO RECUPERADO AUTOMATICAMENTE";
-                aviso.style.cssText = `position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 12px 18px; border-radius: 10px; font-family: Inter, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; box-shadow: 0 8px 24px rgba(15,23,42,.3); z-index: 9999; text-transform: uppercase;`;
-                document.body.appendChild(aviso);
-                setTimeout(() => { aviso.style.transition = "opacity .4s"; aviso.style.opacity = "0"; setTimeout(() => aviso.remove(), 400); }, 3000);
-            }
         })();
     </script>
 </body>
